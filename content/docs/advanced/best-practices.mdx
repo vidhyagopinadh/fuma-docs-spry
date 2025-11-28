@@ -1,0 +1,128 @@
+---
+title: Best Practices
+description: Tips and recommendations for building robust Spry applications
+icon: Lightbulb
+---
+
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Steps, Step } from 'fumadocs-ui/components/steps';
+
+Tips and recommendations for building robust Spry applications
+
+## Project Organization
+
+- **Keep Spryfile.md focused:** Break large files into multiple partials
+- **Group related tasks:** Use Markdown headings to organize tasks logically
+- **Use meaningful names:** Give tasks descriptive names like `setup-db` instead of `task1`
+
+## Task Dependencies
+
+<Callout type="info" title="Tip">
+Keep dependency chains shallow. Deep nesting makes debugging harder.
+</Callout>
+
+````md
+# ✅ Good: Clear, flat structure
+```bash setup-db
+sqlite3 app.db < schema.sql
+```
+
+```bash seed-db --dep setup-db
+sqlite3 app.db < seed.sql
+```
+
+# ❌ Avoid: Deep nesting
+```bash task1
+echo "step 1"
+```
+```bash task2 --dep task1
+echo "step 2"
+```
+```bash task3 --dep task2
+echo "step 3"
+```
+```bash task4 --dep task3
+echo "step 4"
+```
+````
+
+## SQLPage Routes
+
+- **Use descriptive filenames:** `user-profile.sql` instead of `page1.sql`
+- **Prefix partials with underscore:** `_header.sql`, `_footer.sql`
+- **Add authentication checks:** Using partials to inject auth logic into your routes
+
+## Development Workflow
+
+<Steps>
+<Step>
+### Start with Watch Mode
+
+Use `--watch` during development for instant feedback:
+
+```bash
+./spry.ts spc --fs dev-src.auto --watch
+```
+</Step>
+
+<Step>
+### Test Incrementally
+
+Test individual tasks before running the entire runbook:
+
+```bash
+./spry.ts task setup-db
+```
+</Step>
+
+<Step>
+### Version Control
+
+Commit your Spryfile.md and ignore generated files (`dev-src.auto/`, `*.db`).
+</Step>
+</Steps>
+
+## Performance
+
+- **Use indexes:** Adding database indexes for frequently queried columns
+- **Limit result sets:** Always using `LIMIT` for large tables
+- **Cache expensive queries:** Use SQLPage's caching features
+
+## Security
+
+<Callout type="warn" title="Important">
+Always validate and sanitize user input, especially in SQL queries!
+</Callout>
+
+- **Use parameterized queries:** Never concatenate user input into SQL
+- **Implement authentication:** Check user sessions on protected routes
+- **Use HTTPS:** Always use HTTPS in production
+- **Validate file uploads:** Check file types and sizes
+
+## Documentation
+
+Your Spryfile.md IS documentation. Make it readable:
+
+````md
+## Database Setup
+
+This section creates and seeds the application database.
+
+```bash setup-db --descr "Initialize SQLite database with schema"
+rm -f app.db
+sqlite3 app.db < schema.sql
+```
+
+```bash seed-db --dep setup-db --descr "Populate database with initial data"
+sqlite3 app.db < seed.sql
+```
+
+## Notes
+
+- Database is recreated on each setup
+- Seed data includes admin user (username: admin, password: changeme)
+````
+
+<Callout type="info" title="Tip">
+Review the [Spry examples](https://github.com/programmablemd/spry) on GitHub for more patterns and best practices.
+</Callout>

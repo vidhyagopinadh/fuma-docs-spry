@@ -1,0 +1,49 @@
+---
+title: init
+description: Initialize a new Spry project
+icon: Plus
+index : 1
+---
+
+import { Callout } from 'fumadocs-ui/components/callout';
+
+## `init` - Project Initialization
+
+`./spry.ts init` or `./spry.ts --init`
+
+Initialize a new Spry project in the current directory.
+
+```bash
+./spry.ts init
+```
+
+### Usage
+
+```bash
+./spry.ts init [options]
+```
+
+### Options
+
+- `--force` - Remove existing files and recreate from latest tag
+- `-d, --dialect <dialect>` - SQL dialect `sqlite` or `postgres` (default: `sqlite`)
+
+### Examples
+
+```bash
+# Initialize with SQLite (default)
+./spry.ts init
+
+# Initialize with PostgreSQL
+./spry.ts init --dialect postgres
+
+# Force reinitialize
+./spry.ts init --force
+```
+
+### What it creates
+
+- `spry.ts` - Executable CLI wrapper (local Spry CLI script)
+- `Spryfile.md` - Sample Markdown notebook with SQLPage configuration (main executable markdown file)
+- `sqlpage/` - SQLPage configuration directory
+- Updates `.gitignore` with generated directories

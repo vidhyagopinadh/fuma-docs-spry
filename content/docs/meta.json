@@ -1,0 +1,10 @@
+{
+  "title": "Sprymd Docs",
+  "pages": [
+    "getting-started",
+    "core-concepts",
+    "reference-guides",
+    "advanced",
+    "contributing-and-support"
+  ]
+}

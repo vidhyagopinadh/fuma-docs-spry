@@ -1,0 +1,431 @@
+---
+title: Contributing to Spry
+description: Learn how to contribute to Spry - from reporting bugs to submitting pull requests
+icon: GitPullRequest
+---
+
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Steps, Step } from 'fumadocs-ui/components/steps';
+import { File, Folder, Files } from 'fumadocs-ui/components/files';
+
+Thank you for your interest in contributing to Spry! We welcome contributions in all forms - whether it's reporting bugs, suggesting features, improving documentation, or submitting code.
+
+## Ways to Contribute
+
+There are many ways to contribute to Spry:
+
+- **Report Bugs** - Help us identify and fix issues
+- **Suggest Features** - Share ideas for new capabilities
+- **Improve Documentation** - Help make our docs clearer and more comprehensive
+- **Write Code** - Submit pull requests to fix bugs or add features
+- **Help Others** - Answer questions in discussions and issues
+- **Share Examples** - Show the community what you've built with Spry
+
+## Getting Started
+
+### Prerequisites
+
+Before contributing to Spry, ensure you have:
+
+- [Deno 2.5+](https://deno.land) installed
+- [Git](https://git-scm.com/) installed
+- A [GitHub account](https://github.com/signup)
+- Familiarity with TypeScript and Markdown
+
+### Setting Up Your Development Environment
+
+<Steps>
+<Step>
+### Fork the repository
+
+Visit [github.com/programmablemd/spry](https://github.com/programmablemd/spry) and click the "Fork" button.
+</Step>
+
+<Step>
+### Clone your fork
+
+```bash
+git clone https://github.com/YOUR_USERNAME/spry.git
+cd spry
+```
+</Step>
+
+<Step>
+### Add upstream remote
+
+```bash
+git remote add upstream https://github.com/programmablemd/spry.git
+```
+</Step>
+
+<Step>
+### Install dependencies
+
+```bash
+deno cache --reload lib/mod.ts
+```
+</Step>
+
+<Step>
+### Verify your setup
+
+```bash
+deno test
+```
+</Step>
+</Steps>
+
+## Development Workflow
+
+### Creating a Branch
+
+Always create a new branch for your work:
+
+```bash
+git checkout -b feature/your-feature-name
+# or
+git checkout -b fix/your-bug-fix
+```
+
+Use descriptive branch names:
+- `feature/add-python-support`
+- `fix/sql-parsing-error`
+- `docs/improve-quickstart`
+
+### Making Changes
+
+<Steps>
+<Step>
+### Write clean, maintainable code
+
+- Follow TypeScript best practices
+- Use meaningful variable and function names
+- Add comments for complex logic
+- Keep functions focused and small
+</Step>
+
+<Step>
+### Test your changes
+
+```bash
+deno test
+```
+</Step>
+
+<Step>
+### Update documentation
+
+- Update relevant `.md` files
+- Add examples if introducing new features
+- Update API documentation if needed
+</Step>
+
+<Step>
+### Commit your changes
+
+```bash
+git add .
+git commit -m "feat: add Python execution support"
+```
+</Step>
+</Steps>
+
+### Commit Message Guidelines
+
+We follow the [Conventional Commits](https://www.conventionalcommits.org/) specification:
+
+| Prefix | Description |
+|--------|-------------|
+| `feat:` | A new feature |
+| `fix:` | A bug fix |
+| `docs:` | Documentation only changes |
+| `style:` | Code style changes (formatting, missing semicolons, etc.) |
+| `refactor:` | Code refactoring without changing functionality |
+| `perf:` | Performance improvements |
+| `test:` | Adding or updating tests |
+| `chore:` | Maintenance tasks |
+
+**Examples:**
+
+```text
+feat: add PostgreSQL connection pooling
+fix: resolve SQL injection vulnerability
+docs: update installation guide for Windows
+refactor: simplify task dependency resolution
+```
+
+## Submitting Pull Requests
+
+### Before Submitting
+
+<Steps>
+<Step>
+### Sync with upstream
+
+```bash
+git fetch upstream
+git rebase upstream/main
+```
+</Step>
+
+<Step>
+### Run tests
+
+```bash
+deno test
+```
+</Step>
+
+<Step>
+### Format your code
+
+```bash
+deno fmt
+```
+</Step>
+
+<Step>
+### Lint your code
+
+```bash
+deno lint
+```
+</Step>
+</Steps>
+
+### Creating the Pull Request
+
+<Steps>
+<Step>
+### Push your branch
+
+```bash
+git push origin feature/your-feature-name
+```
+</Step>
+
+<Step>
+### Open a pull request
+
+- Go to your fork on GitHub
+- Click "New Pull Request"
+- Select your branch
+- Fill in the PR template
+</Step>
+
+<Step>
+### PR Title and Description
+
+- Use a clear, descriptive title
+- Reference related issues (e.g., "Fixes #123")
+- Describe what changed and why
+- Include screenshots/examples if applicable
+</Step>
+</Steps>
+
+### PR Template
+
+```markdown
+## Description
+Brief description of changes
+
+## Related Issues
+Fixes #123
+
+## Type of Change
+- [ ] Bug fix
+- [ ] New feature
+- [ ] Breaking change
+- [ ] Documentation update
+
+## Testing
+How has this been tested?
+
+## Checklist
+- [ ] Tests pass locally
+- [ ] Code follows project style
+- [ ] Documentation updated
+- [ ] Commit messages follow conventions
+```
+
+## Code Style Guidelines
+
+### TypeScript
+
+- Use TypeScript for all source code
+- Enable strict mode
+- Prefer `const` over `let`, avoid `var`
+- Use descriptive type names
+- Document public APIs with JSDoc comments
+
+```typescript
+/**
+ * Executes a Markdown code block as a task
+ * @param cell - The code block to execute
+ * @param context - Execution context
+ * @returns Promise resolving to execution result
+ */
+export async function executeCell(
+  cell: CodeCell,
+  context: ExecutionContext
+): Promise<ExecutionResult> {
+  // Implementation
+}
+```
+
+### Markdown
+
+- Use ATX-style headers (`#` syntax)
+- Add blank lines around code blocks
+- Use fenced code blocks with language identifiers
+- Keep lines under 100 characters when possible
+- Use reference-style links for readability
+
+### File Organization
+
+<Files>
+  <Folder name="spry" defaultOpen>
+    <Folder name="lib" defaultOpen>
+      <Folder name="core" />
+      <Folder name="parsers" />
+      <Folder name="executors" />
+      <Folder name="sqlpage" />
+    </Folder>
+    <Folder name="tests" />
+    <Folder name="docs" />
+    <Folder name="examples" />
+  </Folder>
+</Files>
+
+**Directory structure:**
+
+- `lib/` - Core library code
+  - `core/` - Core functionality
+  - `parsers/` - Markdown parsers
+  - `executors/` - Code execution engines
+  - `sqlpage/` - SQLPage integration
+- `tests/` - Test files
+- `docs/` - Documentation
+- `examples/` - Example Spryfiles
+
+## Testing
+
+### Writing Tests
+
+- Write tests for all new features
+- Use descriptive test names
+- Follow the Arrange-Act-Assert pattern
+- Test edge cases and error conditions
+
+```typescript
+Deno.test("executeCell: handles SQL queries correctly", async () => {
+  // Arrange
+  const cell = createSQLCell("SELECT 1");
+  const context = createTestContext();
+  
+  // Act
+  const result = await executeCell(cell, context);
+  
+  // Assert
+  assertEquals(result.success, true);
+  assertEquals(result.output, "1");
+});
+```
+
+### Running Tests
+
+```bash
+# Run all tests
+deno test
+
+# Run specific test file
+deno test tests/parser_test.ts
+
+# Run tests with coverage
+deno test --coverage=coverage
+
+# Generate coverage report
+deno coverage coverage
+```
+
+## Documentation
+
+### Documentation Standards
+
+- Write clear, concise documentation
+- Include practical examples
+- Keep the audience in mind (beginners vs advanced users)
+- Update docs alongside code changes
+- Use proper Markdown formatting
+
+### Documentation Types
+
+1. **API Documentation** - JSDoc comments in code
+2. **User Guides** - Step-by-step tutorials
+3. **Reference** - Comprehensive feature documentation
+4. **Examples** - Working `Spryfile.md` examples
+
+## Community Guidelines
+
+### Code of Conduct
+
+We are committed to providing a welcoming and inclusive environment. Please:
+
+- Be respectful and considerate
+- Accept constructive criticism gracefully
+- Focus on what's best for the community
+- Show empathy towards other community members
+
+### Communication
+
+- Use GitHub Issues for bug reports and feature requests
+- Use GitHub Discussions for questions and ideas
+- Join Discord for real-time chat
+- Be patient - maintainers are often volunteers
+
+### Review Process
+
+<Steps>
+<Step>
+### Initial Review
+
+Maintainers will review within 1-2 weeks
+</Step>
+
+<Step>
+### Feedback
+
+Address any requested changes
+</Step>
+
+<Step>
+### Approval
+
+Once approved, PR will be merged
+</Step>
+
+<Step>
+### Release
+
+Changes included in next release
+</Step>
+</Steps>
+
+## Recognition
+
+Contributors are recognized in:
+- The [CONTRIBUTORS.md](https://github.com/programmablemd/spry/blob/main/CONTRIBUTORS.md) file
+- Release notes for significant contributions
+- Project README for major features
+
+## Questions?
+
+<Callout type="info">
+If you have questions about contributing:
+
+1. Check the [FAQ](/docs/faq)
+2. Ask in [GitHub Discussions](https://github.com/programmablemd/spry/discussions)
+3. Reach out on [Discord](#)
+</Callout>
+
+Thank you for contributing to Spry! Your efforts help make executable Markdown accessible to everyone.

@@ -1,0 +1,16 @@
+
+{
+  "title": "Core Concepts",
+  "icon": "Lightbulb",
+  "pages": [
+    "executable-markdown",
+    "task-orchestration",
+    "sql-page-integration",
+    "templates-and-partials",
+    "common-workflows",
+    "environment-variables",
+    "dag",
+    "ast"
+  ],
+  "root": true
+}

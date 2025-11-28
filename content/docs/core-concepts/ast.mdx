@@ -1,0 +1,169 @@
+---
+title: AST
+description: AST in SPRY.
+icon: Braces
+index : 7
+---
+
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Tabs, Tab } from 'fumadocs-ui/components/tabs';
+
+## Introduction
+
+Abstract Syntax Trees (AST) are structured, tree-like representations of source content.  
+In **Spry**, ASTs are widely used to inspect, transform, and automate workflows involving Markdown-based runbooks, configuration, and documentation.
+
+Spry internally parses Markdown into **mdast** (Markdown AST) so that automated tools can analyze nodes, extract metadata, transform blocks, or execute code cells in runbooks.
+
+---
+
+## Concept of AST
+
+An **AST (Abstract Syntax Tree)** is:
+
+- A hierarchical representation of content  
+- Broken into nodes (heading, paragraph, code, list, table, etc.)  
+- Language-independent  
+- Ideal for transformations, validations, and querying
+
+In Spry, the AST lets you:
+
+- Inspect Markdown structure  
+- Query nodes  
+- Identify runbook cells  
+- Modify or extract information  
+- Understand flow and dependencies between cells (useful for DAG execution)
+
+Spry mainly works with **mdast**, a Markdown AST format from the unified ecosystem.
+
+---
+
+## How AST Is Used in SPRY
+
+### 1. Runbook Analysis
+
+Spry parses Markdown runbooks into AST to:
+
+- Detect executable code blocks
+- Determine DAG ordering
+- Execute tasks in correct dependency order
+- Validate metadata (YAML frontmatter, tags, identifiers)
+
+### 2. Markdown Processing
+
+Spry uses AST to:
+
+- Inspect headings and structure
+- Transform content programmatically
+- Extract identifiers, links, or code samples
+
+### 3. Spry CLI Tools
+
+Commands like `./spry.ts mdast` allow:
+
+- Querying AST nodes
+- Listing node hierarchies
+- Inspecting Markdown documents before automation or execution
+
+---
+
+## Possible SPRY AST Commands
+
+### 1. List Nodes
+
+```bash
+./spry.ts mdast ls file.md
+```
+
+Shows a structured view of all nodes.
+
+#### Example Output
+
+```text
+1: root
+ ├─ heading (level 1)
+ ├─ paragraph
+ ├─ code (lang: ts)
+ └─ list (ordered: false)
+```
+
+---
+
+### 2. List Identifiers
+
+```bash
+./spry.ts mdast identifiers file.md
+```
+
+Useful for:
+
+- Extracting headings
+- Getting reference anchors
+- Documentation generation
+
+---
+
+### 3. Filter by Node Type
+
+```bash
+./spry.ts mdast ls file.md --type code
+```
+
+Shows only code blocks.
+
+---
+
+## Example Use Cases
+
+### Example Markdown
+
+````markdown title="sample.md"
+# Sample Runbook
+
+## Step 1
+```ts
+console.log("Hello")
+```
+
+## Step 2
+- item 1
+- item 2
+````
+
+### AST Listing Example
+
+```bash
+./spry.ts mdast ls sample.md
+```
+
+### Output Example
+
+```text
+root
+ ├─ heading (level 1): "Sample Runbook"
+ ├─ heading (level 2): "Step 1"
+ ├─ code: ts
+ ├─ heading (level 2): "Step 2"
+ └─ list
+```
+
+---
+
+## Summary
+
+<Callout type="info">
+Spry uses AST (mdast) to power:
+
+- Runbook execution
+- Transformations
+- Documentation introspection
+- DAG-based workflows
+
+The `./spry.ts mdast` command family allows you to deeply inspect and interact with AST structures.
+</Callout>
+
+---
+
+<Callout>
+This document provides an overview of AST usage in Spry, with commands and examples for easy reference.
+</Callout>

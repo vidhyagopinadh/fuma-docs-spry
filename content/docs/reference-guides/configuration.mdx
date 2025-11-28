@@ -1,0 +1,118 @@
+---
+title: Configuration
+description: Configure Spry and SQLPage for your project
+icon: Settings
+---
+
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Tabs, Tab } from 'fumadocs-ui/components/tabs';
+import { File, Folder, Files } from 'fumadocs-ui/components/files';
+
+Configure Spry and SQLPage for your project
+
+## SQLPage Configuration
+
+Configure SQLPage in `sqlpage/sqlpage.json`:
+
+```json title="sqlpage/sqlpage.json"
+{
+  "database_url": "sqlite://app.db",
+  "port": 8080,
+  "site_title": "My Spry Application",
+  "site_prefix": "",
+  "max_uploaded_file_size": 10485760,
+  "environment": "development"
+}
+```
+
+## Configuration Options
+
+### database_url
+
+Connection string for your database (SQLite or PostgreSQL)
+
+```json
+"database_url": "postgresql://user:pass@localhost:5432/db"
+```
+
+### port
+
+Port number for the SQLPage server (default: 8080)
+
+### site_title
+
+Default title for your application pages
+
+### site_prefix
+
+URL prefix for all routes (useful for subdirectory deployments)
+
+## Environment Variables
+
+Configure Spry using environment variables:
+
+```bash
+# Database connection
+export DATABASE_URL="postgresql://localhost:5432/mydb"
+
+# SQLPage configuration
+export SQLPAGE_PORT=8080
+export SQLPAGE_SITE_PREFIX=""
+
+# Spry behavior
+export SPRY_WATCH_INTERVAL=500
+export SPRY_LOG_LEVEL="info"
+```
+
+<Callout type="info" title="Tip">
+Use separate configuration files for development and production environments.
+</Callout>
+
+## Project Structure
+
+Recommended directory structure for Spry projects:
+
+<Files>
+  <Folder name="project" defaultOpen>
+    <File name="Spryfile.md" />
+    <File name="spry.ts" />
+    <Folder name="sqlpage" defaultOpen>
+      <File name="sqlpage.json" />
+      <File name="sqlpage.prod.json" />
+      <Folder name="migrations" />
+    </Folder>
+    <Folder name="dev-src.auto" />
+    <Folder name="dist" />
+    <Folder name="scripts" />
+    <Folder name="data" />
+  </Folder>
+</Files>
+
+**Structure breakdown:**
+
+- `Spryfile.md` - Main executable markdown
+- `spry.ts` - Spry CLI script
+- `sqlpage/sqlpage.json` - SQLPage config (dev)
+- `sqlpage/sqlpage.prod.json` - Production config
+- `sqlpage/migrations/` - Database migrations
+- `dev-src.auto/` - Generated SQLPage files (dev)
+- `dist/` - Production build output
+- `scripts/` - Additional scripts
+- `data/` - Data files and seeds
+
+## Multiple Configurations
+
+Use different configurations for different environments:
+
+<Tabs items={['Development', 'Production']}>
+  <Tab value="Development">
+    ```bash
+    ./spry.ts spc --fs dev-src.auto --conf sqlpage/sqlpage.json --watch
+    ```
+  </Tab>
+  <Tab value="Production">
+    ```bash
+    ./spry.ts spc --fs dist --conf sqlpage/sqlpage.prod.json
+    ```
+  </Tab>
+</Tabs>

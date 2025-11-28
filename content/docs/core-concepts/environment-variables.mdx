@@ -1,0 +1,141 @@
+---
+title: Environment Variables
+description: Recommended Spry environment setup using direnv and .envrc, with details on creation, invocation, and workflow integration.
+icon: Settings
+index : 5
+---
+
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Steps, Step } from 'fumadocs-ui/components/steps';
+import { File, Folder, Files } from 'fumadocs-ui/components/files';
+
+## Environment Variables and `.envrc` in Spry
+
+Spry supports environment-based configuration, allowing you to manage environment specific values in a clean, isolated way.  
+The recommended method is to use a **directory-scoped `.envrc` file** along with **[`direnv`](https://direnv.net/)**.  
+This ensures all developers or automation pipelines can share consistent environment setups without hardcoding sensitive or system-specific details.
+
+---
+
+### Why use `.envrc`?
+
+- **Isolation:** Configuration applies only to the current project directory.  
+- **Consistency:** All contributors share the same environment setup.  
+- **Security:** `direnv` only loads `.envrc` after explicit approval using `direnv allow`.  
+- **Automation-ready:** Integrates seamlessly with Spry's dev and deployment workflows.  
+
+---
+
+### Recommended Setup — Environment Variables and `.envrc`
+
+The **recommended practice** is to define your environment variables in a local `.envrc` file.  
+When you use `direnv`, it automatically loads these values each time you enter the project directory.
+
+#### Create `.envrc`
+
+Create a file named `.envrc` in the root of your Spry project directory.
+
+```bash title=".envrc"
+# .envrc (bash/zsh)
+export SPRY_DB="sqlite://sqlpage.db?mode=rwc"
+export PORT=9227
+```
+
+Your project structure should look like this:
+
+<Files>
+  <Folder name="my-spry-project" defaultOpen>
+    <File name="Spryfile.md" />
+    <Folder name="sqlpage">
+      <File name="sqlpage.json" />
+    </Folder>
+    <File name=".envrc" />
+  </Folder>
+</Files>
+
+Once the file is created, run the following command in your terminal:
+
+```bash
+direnv allow
+```
+
+This grants `direnv` permission to load environment variables from `.envrc` into your shell whenever you enter this directory.
+
+---
+
+### Creating `.envrc` using a Task
+
+If you prefer automating `.envrc` creation through a Spry task or script, you can do so using a shell task.
+
+#### Usage — `envrc env -C ./.envrc` Syntax
+
+Sometimes, you may see documentation or examples using:
+
+````markdown
+```envrc env -C ./.envrc --gitignore --descr "Generate .envrc file and add it to local .gitignore if it's not already there"
+export SPRY_DB="sqlite://scf-2025.3.sqlite.db?mode=rwc"
+export PORT=9227
+```
+````
+
+##### What does this mean?
+
+This syntax **illustrates how environment variables can be defined and loaded**. It creates the `.envrc` file** by itself.
+
+### Manual Script-Based Creation
+
+```bash
+# Create .envrc file with default values
+echo 'export SPRY_DB="sqlite://sqlpage.db?mode=rwc"' > .envrc
+echo 'export PORT=9227' >> .envrc
+```
+
+Then run:
+
+```bash
+direnv allow
+```
+
+### Execute via Spry Task
+
+Spry also allows running the environment setup through a task defined in your Spry workflow.  
+If your Spry configuration includes a task named `env`, you can execute it as follows:
+
+```bash
+./spry.ts task env
+```
+
+This command internally runs the equivalent of:
+
+````markdown
+```envrc env -C ./.envrc --gitignore --descr "Generate .envrc file and add it to local .gitignore if it's not already there"
+export SPRY_DB="sqlite://scf-2025.3.sqlite.db?mode=rwc"
+export PORT=9227
+```
+````
+
+After running the task, you should still execute:
+
+```bash
+direnv allow
+```
+
+to authorize `direnv` to load the variables defined in `.envrc`.
+
+---
+
+## Summary
+
+| Method | Description | Usage |
+|--------|-------------|--------|
+| **Manual** | Create `.envrc` manually, then enable it with `direnv allow`. | `cat > .envrc ...` then `direnv allow` |
+| **Recommended: Task-based** | Automates the recommended command using a Spry task. | `./spry.ts task env` then `direnv allow` |
+
+---
+
+By following these approaches, you can ensure consistent, isolated, and easily maintainable environment setups across all Spry-based projects.
+
+<Callout>
+The values shown above (`SPRY_DB`, `PORT`) are **example values** used for demonstration.  
+Replace them with your project's actual database URL, credentials, and desired port number.
+</Callout>

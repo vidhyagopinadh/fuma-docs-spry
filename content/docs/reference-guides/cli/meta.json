@@ -1,0 +1,14 @@
+{
+  "title": "CLI",
+  "pages": [
+    "help",
+    "init",
+    "doctor",
+    "mdast",
+    "spc",
+    "task",
+    "runbook",
+    "qualityfolio-cli",
+    "version"
+  ]
+}

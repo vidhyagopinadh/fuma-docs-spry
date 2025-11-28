@@ -1,0 +1,6 @@
+{
+  "title": "Reference Guides",
+  "icon": "BookOpen",
+  "pages": ["configuration", "cli-commands", "cli"],
+  "root": true
+}

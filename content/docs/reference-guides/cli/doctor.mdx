@@ -1,0 +1,38 @@
+---
+title: doctor
+description: Check system dependencies and their availability
+icon: Stethoscope
+index : 2
+---
+
+import { Callout } from 'fumadocs-ui/components/callout';
+
+## `doctor` - Dependency Check
+
+`./spry.ts doctor` or `./spry.ts --doctor`
+
+Check system dependencies and their availability.
+
+```bash
+./spry.ts doctor
+```
+
+### Usage
+
+```bash
+./spry.ts doctor
+```
+
+### What it checks
+
+- Deno runtime (`deno --version`)
+- SQLite or PostgreSQL
+- SQLPage (`sqlpage --version`)
+- Other required tools
+
+### Example
+
+```bash
+./spry.ts doctor
+# Checks for: deno --version, sqlpage --version
+```

@@ -1,0 +1,121 @@
+---
+title: Common Workflows
+description: Common Workflows in Spry.
+icon: Workflow
+index : 4
+---
+
+import { Steps, Step } from 'fumadocs-ui/components/steps';
+
+## Development Workflow
+
+Follow these steps to set up and run your development environment:
+
+<Steps>
+<Step>
+### Initialize project
+
+```bash
+./spry.ts init
+```
+
+Initializes the project structure and dependencies.
+</Step>
+
+<Step>
+### Start development server with live reload
+
+```bash
+./spry.ts spc --fs dev-src.auto --destroy-first --conf sqlpage/sqlpage.json --watch --with-sqlpage
+```
+
+Launches a development server with automatic file watching and live reload.
+</Step>
+
+<Step>
+### List and execute tasks as needed
+
+```bash
+./spry.ts task ls
+./spry.ts task prepare-db
+```
+
+Provides task management capabilities for database preparation and other setup tasks.
+</Step>
+</Steps>
+
+---
+
+## Deployment Workflow
+
+Deploy your application to production with these steps:
+
+<Steps>
+<Step>
+### Clean development artifacts
+
+```bash
+rm -rf dev-src.auto
+```
+
+Removes temporary development files.
+</Step>
+
+<Step>
+### Package and deploy to database
+
+```bash
+./spry.ts spc --package --conf sqlpage/sqlpage.json | sqlite3 production.db
+```
+
+Packages the application and deploys it to the production database.
+</Step>
+
+<Step>
+### Start SQLPage server
+
+```bash
+sqlpage
+```
+
+Starts the SQLPage server to serve the application.
+</Step>
+</Steps>
+
+---
+
+## Task Management Workflow
+
+Manage and execute tasks efficiently:
+
+<Steps>
+<Step>
+### List available tasks
+
+```bash
+./spry.ts task ls
+```
+
+Displays all available tasks in the project.
+</Step>
+
+<Step>
+### Execute specific task
+
+```bash
+./spry.ts task my-task --verbose rich
+```
+
+Runs a specific task with detailed verbose output.
+</Step>
+
+<Step>
+### Execute all tasks in order
+
+```bash
+./spry.ts runbook --summarize
+```
+
+Executes all tasks sequentially with a summary of results.
+</Step>
+</Steps>

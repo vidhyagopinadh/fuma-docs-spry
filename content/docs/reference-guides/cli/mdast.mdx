@@ -1,0 +1,488 @@
+---
+title: mdast
+description: Execute all mdast commands
+icon: Trees
+index : 3
+---
+
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Tabs, Tab } from 'fumadocs-ui/components/tabs';
+import { Steps, Step } from 'fumadocs-ui/components/steps';
+
+## `mdast` - Overview
+
+The `spry.ts mdast` command provides powerful tools for querying, exploring, and analyzing Markdown Abstract Syntax Trees (MDAST). It allows you to inspect the structure of your Markdown files, extract specific nodes, understand document hierarchies, and validate document schemas.
+
+```bash
+# Verify installation
+./spry.ts mdast --help
+```
+
+## Command Syntax
+
+```bash
+./spry.ts mdast <subcommand> [paths...] [options]
+```
+
+### Global Options
+
+- `-h, --help` - Display help information for the command
+
+### Path Arguments
+
+All subcommands accept one or more file paths:
+
+```bash
+# Single file
+./spry.ts mdast ls Spryfile.md
+
+# Multiple files
+./spry.ts mdast ls README.md docs/guide.md
+
+# Glob patterns (if supported by your shell)
+./spry.ts mdast ls docs/*.md
+```
+
+## Subcommands
+
+### 1. `ls` - List MDAST Nodes
+
+**Purpose**: Display a tabular view of all MDAST nodes with their content hierarchy.
+
+**Syntax**:
+
+```bash
+./spry.ts mdast ls [paths...]
+```
+
+**Description**:
+
+The `ls` command provides a comprehensive table listing all nodes in your Markdown file(s). It shows:
+
+- Node types (heading, paragraph, code, list, etc.)
+- Hierarchy level (depth in the tree)
+- Content preview or summary
+- Relationships between nodes
+
+**Use Cases**:
+
+- Understanding document structure
+- Debugging complex Markdown layouts
+- Identifying node types for transformation
+- Inspecting parsed content
+
+**Example**:
+
+```bash
+./spry.ts mdast ls Spryfile.md
+```
+
+**Expected Output Format**:
+
+```text
+Type        Depth  Content Preview
+----------  -----  ----------------------------------------
+root        0      [document root]
+heading     1      "# Project Title"
+paragraph   1      "This is a description..."
+code        1      lang=sql, lines=5
+heading     1      "## Tasks"
+list        2      ordered=false, items=3
+listItem    3      "Task one"
+```
+
+<Callout type="info">
+**Tips:**
+- Use this as your first exploration tool when analyzing unfamiliar Markdown
+- Pipe output to `grep` or other tools for filtering
+- Compare output across files to ensure consistency
+</Callout>
+
+### 2. `identifiers` - List Node Identifiers
+
+**Purpose**: Extract and list all node identifiers, showing SUPPLIER/ID pairs.
+
+**Syntax**:
+
+```bash
+./spry.ts mdast identifiers [paths...]
+```
+
+**Description**:
+
+The `identifiers` command extracts unique identifiers from your Markdown nodes. In Spry, identifiers are used to:
+
+- Reference specific sections or cells
+- Build dependency graphs
+- Track execution order
+- Link between documents
+
+Each identifier is typically associated with:
+
+- **SUPPLIER**: The source or context of the identifier (e.g., file name, section)
+- **ID**: The unique identifier value
+
+**Use Cases**:
+
+- Listing all executable cells with their IDs
+- Finding duplicate identifiers
+- Generating cross-reference indexes
+- Validating identifier uniqueness
+
+**Example**:
+
+```bash
+./spry.ts mdast identifiers Spryfile.md
+```
+
+**Expected Output Format**:
+
+```text
+SUPPLIER        ID
+--------------  ------------------
+Spryfile.md     task-build
+Spryfile.md     task-test
+Spryfile.md     sql-migration-01
+Spryfile.md     sql-query-users
+```
+
+**Common Identifier Patterns**:
+
+Identifiers can come from various sources:
+
+**Heading with explicit ID:**
+```markdown
+## Task: Build {#task-build}
+```
+
+**Code block with ID attribute:**
+```markdown
+```sql {id=query-users}
+SELECT * FROM users;
+` ` `
+```
+
+**Container directive with ID:**
+```markdown
+::: {#section-intro}
+Content here
+:::
+```
+
+<Callout type="info">
+**Tips:**
+- Use consistent naming conventions for identifiers
+- Avoid spaces and special characters in IDs
+- Prefix identifiers by type (e.g., `task-`, `sql-`, `section-`)
+- Run this command to detect duplicates before execution
+</Callout>
+
+### 3. `tree` - Heading/Content Hierarchy
+
+**Purpose**: Display the document structure as a hierarchical tree organized by headings.
+
+**Syntax**:
+
+```bash
+./spry.ts mdast tree [paths...]
+```
+
+**Description**:
+
+The `tree` command renders your Markdown document as a hierarchical outline, showing:
+
+- Heading levels (H1-H6)
+- Content nested under each heading
+- Document organization and structure
+- Section relationships
+
+This is similar to a table of contents but includes visibility into content under each heading.
+
+**Use Cases**:
+
+- Generating document outlines
+- Validating section hierarchy
+- Understanding document flow
+- Checking heading depth consistency
+
+**Example**:
+
+```bash
+./spry.ts mdast tree Spryfile.md
+```
+
+**Expected Output Format**:
+
+```text
+Spryfile.md
+│
+├─ # Project Configuration
+│  ├─ paragraph: "This project uses Spry..."
+│  └─ code: sql (3 lines)
+│
+├─ ## Build Tasks
+│  ├─ ### Task: Compile
+│  │  └─ code: bash (2 lines)
+│  │
+│  └─ ### Task: Bundle
+│     └─ code: bash (1 line)
+│
+└─ ## Database Migrations
+   ├─ paragraph: "Migrations are run in order..."
+   └─ code: sql (15 lines)
+```
+
+<Callout type="info">
+**Tips:**
+- Use heading levels consistently (don't skip from H1 to H3)
+- Keep heading depth manageable (typically ≤ 4 levels)
+- Organize related content under appropriate headings
+- Use this to validate document structure before execution
+</Callout>
+
+### 4. `class` - Classification Hierarchy
+
+**Purpose**: Show how nodes are classified using a key→value→nodes hierarchy.
+
+**Syntax**:
+
+```bash
+./spry.ts mdast class [paths...]
+```
+
+**Description**:
+
+The `class` command groups and categorizes nodes based on their classification attributes. Classifications can be:
+
+- Node types (heading, code, list, etc.)
+- Custom attributes (task, cell, directive, etc.)
+- Metadata values (language, environment, priority, etc.)
+- User-defined classifications
+
+This creates a multi-level hierarchy:
+
+```text
+Classification Key
+  └─ Classification Value
+      └─ Nodes matching this classification
+```
+
+**Use Cases**:
+
+- Grouping executable cells by type
+- Organizing tasks by category
+- Filtering nodes by attribute
+- Creating execution pipelines
+
+**Example**:
+
+```bash
+./spry.ts mdast class Spryfile.md
+```
+
+**Expected Output Format**:
+
+```text
+Classification: node-type
+  ├─ heading: 8 nodes
+  ├─ code: 12 nodes
+  ├─ paragraph: 15 nodes
+  └─ list: 4 nodes
+
+Classification: code-language
+  ├─ sql: 6 nodes
+  ├─ bash: 4 nodes
+  └─ javascript: 2 nodes
+
+Classification: task-type
+  ├─ build: 3 nodes
+  ├─ test: 2 nodes
+  └─ deploy: 1 node
+
+Classification: environment
+  ├─ development: 5 nodes
+  ├─ staging: 3 nodes
+  └─ production: 2 nodes
+```
+
+**How to Add Classifications**:
+
+Using code fence metadata:
+
+````markdown
+```sql {class=migration env=production}
+CREATE TABLE users (...);
+```
+
+```bash {class=build-task priority=high}
+npm run build
+```
+````
+
+Using directives:
+
+```markdown
+::: {class=documentation type=api}
+API documentation content
+:::
+```
+
+### 5. `schema` - Section Schema Hierarchy
+
+**Purpose**: Display and validate the section schema using the documentSchema plugin.
+
+**Syntax**:
+
+```bash
+./spry.ts mdast schema [paths...]
+```
+
+**Description**:
+
+The `schema` command leverages Spry's documentSchema plugin to:
+
+- Define expected document structure
+- Validate section organization
+- Enforce required sections
+- Check section attributes and content
+
+A schema defines rules like:
+
+- Which sections must exist
+- What order sections should appear in
+- What content types are allowed in each section
+- Required attributes for sections
+
+**Use Cases**:
+
+- Validating Spryfile.md against project standards
+- Ensuring all required tasks are defined
+- Checking migration file structure
+- Enforcing documentation templates
+- Pre-flight validation before execution
+
+**Example**:
+
+```bash
+./spry.ts mdast schema Spryfile.md
+```
+
+**Expected Output Format**:
+
+```text
+Schema Validation: Spryfile.md
+
+Document Schema: sqlpage-project
+  ✓ Section: Configuration
+    ✓ Required: true
+    ✓ Type: heading (level 2)
+    ✓ Contains: code blocks (sql)
+    
+  ✓ Section: Build Tasks
+    ✓ Required: true
+    ✓ Type: heading (level 2)
+    ✓ Subsections: compile, bundle, test
+    
+  ⚠ Section: Database Migrations
+    ✓ Required: true
+    ✓ Type: heading (level 2)
+    ⚠ Warning: Missing 'rollback' subsection
+    
+  ✗ Section: Deployment
+    ✗ Required: true
+    ✗ Error: Section not found
+
+Validation: FAILED (1 error, 1 warning)
+```
+
+**Defining a Schema**:
+
+Schemas can be defined in YAML frontmatter or separate schema files:
+
+```yaml
+---
+schema:
+  name: sqlpage-project
+  sections:
+    - name: Configuration
+      required: true
+      heading_level: 2
+      contains:
+        - type: code
+          lang: sql
+    
+    - name: Build Tasks
+      required: true
+      heading_level: 2
+      subsections:
+        - compile
+        - bundle
+        - test
+    
+    - name: Database Migrations
+      required: true
+      heading_level: 2
+      ordered: true
+---
+```
+
+## Practical Workflows
+
+### 1. Document Exploration Workflow
+
+When first examining a Markdown file:
+
+<Steps>
+  <Step>
+    ### Get overview of structure
+    
+    ```bash
+    ./spry.ts mdast tree Spryfile.md
+    ```
+  </Step>
+
+  <Step>
+    ### List all nodes with details
+    
+    ```bash
+    ./spry.ts mdast ls Spryfile.md
+    ```
+  </Step>
+
+  <Step>
+    ### Check identifiers
+    
+    ```bash
+    ./spry.ts mdast identifiers Spryfile.md
+    ```
+  </Step>
+
+  <Step>
+    ### View classifications
+    
+    ```bash
+    ./spry.ts mdast class Spryfile.md
+    ```
+  </Step>
+</Steps>
+
+### 2. Validation Workflow
+
+Before executing a Spryfile:
+
+```bash
+# Validate schema
+./spry.ts mdast schema Spryfile.md
+```
+
+### 3. Analysis Workflow
+
+Analyzing multiple documents:
+
+```bash
+# List all identifiers across project
+./spry.ts mdast identifiers docs/*.md | sort | uniq
+
+# Find duplicate IDs
+./spry.ts mdast identifiers docs/*.md | sort | uniq -d
+```

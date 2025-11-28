@@ -1,0 +1,43 @@
+---
+title: Qualityfolio CLI
+description: Quality assurance and testing workflow commands
+icon: CheckCircle
+index: 4
+---
+
+import { Callout } from 'fumadocs-ui/components/callout';
+
+## Qualityfolio CLI Commands
+
+For quality assurance and testing workflows, Spry includes a separate Qualityfolio CLI.
+
+## `qf ls` - List Quality Folio Items
+
+List items from quality folio Markdown files.
+
+### Usage
+
+```bash
+./spry.ts qf ls <files...> [options]
+```
+
+### Options
+
+- `--limit <number>` - Limit number of results per file
+
+### Examples
+
+```bash
+# List items from quality files
+./spry.ts qf ls test-plan.md quality-cases.md
+
+# Limit results
+./spry.ts qf ls *.md --limit 50
+
+# List from all markdown files
+./spry.ts qf ls *.md
+```
+
+### Purpose
+
+The `qf ls` command helps you review and manage quality assurance items, test cases, and quality metrics documented in your Markdown files. This is useful for tracking test coverage, quality standards, and testing workflows.

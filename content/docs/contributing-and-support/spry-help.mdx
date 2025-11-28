@@ -1,0 +1,185 @@
+---
+title: Getting Help
+description: Find support, report issues, and connect with the Spry community
+icon: LifeBuoy
+---
+
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Steps, Step } from 'fumadocs-ui/components/steps';
+import { Card, Cards } from 'fumadocs-ui/components/card';
+
+Need assistance with Spry? We're here to help! This page outlines the various ways you can get support, report issues, or connect with the Spry community.
+
+## Quick Links
+
+<Cards>
+  <Card title="GitHub Issues" href="https://github.com/programmablemd/spry/issues">
+    Report bugs or request features
+  </Card>
+  <Card title="GitHub Discussions" href="https://github.com/programmablemd/spry/discussions">
+    Ask questions and share ideas
+  </Card>
+  <Card title="Discord Community" href="#">
+    Chat with other users and contributors
+  </Card>
+</Cards>
+
+## Reporting Issues
+
+If you've encountered a bug or unexpected behavior:
+
+<Steps>
+<Step>
+### Search existing issues
+
+Check if someone has already reported the problem
+</Step>
+
+<Step>
+### Gather information
+
+Note your Spry version, Deno version, operating system, and steps to reproduce
+</Step>
+
+<Step>
+### Create a detailed report
+
+Include:
+- Clear description of the issue
+- Steps to reproduce
+- Expected vs actual behavior
+- Relevant Markdown code snippets or `Spryfile.md` examples
+- Error messages or logs
+- Screenshots if applicable
+</Step>
+</Steps>
+
+[Report a bug →](https://github.com/programmablemd/spry/issues/new?template=bug_report.md)
+
+## Feature Requests
+
+Have an idea to improve Spry?
+
+1. Check [existing feature requests](https://github.com/programmablemd/spry/issues?q=is%3Aissue+label%3Aenhancement)
+2. Start a [discussion](https://github.com/programmablemd/spry/discussions) to gather feedback
+3. Submit a formal [feature request](https://github.com/programmablemd/spry/issues/new?template=feature_request.md)
+
+## Getting Support
+
+### GitHub Discussions
+
+For questions, ideas, and community support, use [GitHub Discussions](https://github.com/programmablemd/spry/discussions):
+
+- **Q&A** - Ask questions about using Spry
+- **Ideas** - Share suggestions and discuss potential features
+- **Show and Tell** - Share what you've built with Spry
+- **General** - Everything else related to Spry
+
+### Community Chat
+
+Join our [Discord server](#) for real-time conversations:
+
+- Get quick answers to questions
+- Share tips and tricks
+- Connect with other Spry users
+- Stay updated on development
+
+### Documentation
+
+Before asking for help, check if your question is answered in:
+
+- [Getting Started Guide](/docs/getting-started)
+- [API Reference](/docs/api)
+- [Examples](/docs/examples)
+- [FAQ](/docs/faq)
+
+## Common Issues
+
+### Installation Problems
+
+If you're having trouble installing Spry:
+
+```bash
+# Ensure you have Deno 2.5+ installed
+deno --version
+
+# Run Spry initializer
+cd <your-project>
+deno run --node-modules-dir=auto -A https://raw.githubusercontent.com/programmablemd/spry/main/lib/sqlpage/cli.ts init
+```
+
+### Spryfile.md Not Executing
+
+Make sure your code blocks have the correct language identifiers and attributes:
+
+````md
+```sql {.store-result}
+SELECT * FROM users;
+```
+````
+
+### SQLPage Integration Issues
+
+For SQLPage-related problems:
+
+- Verify your `sqlpage/sqlpage.json` configuration
+- Check that `dev-src.auto/` directory is being generated
+- Ensure database connection strings are correct
+
+### Performance Issues
+
+For large Markdown files or complex workflows:
+
+- Break content into smaller, focused `Spryfile.md` documents
+- Use task dependencies efficiently
+- Monitor execution with `--watch` during development
+
+## Security Issues
+
+<Callout type="error" title="Security Vulnerabilities">
+If you discover a security vulnerability, please **do not** open a public issue. Instead:
+
+1. Email security@programmablemd.org with details
+2. Allow us time to address the issue
+3. We'll credit you in the security advisory (if desired)
+
+See our [Security Policy](https://github.com/programmablemd/spry/security/policy) for more information.
+</Callout>
+
+## Contributing
+
+Want to help improve Spry? See our [Contributing Guide](/docs/contributing-and-support/contributing-to-spry) to learn how to:
+
+- Set up your development environment
+- Submit pull requests
+- Follow our coding standards
+- Join the core contributor team
+
+## Response Times
+
+We're a community-driven project. Expected response times:
+
+| Type | Response Time |
+|------|---------------|
+| **Critical bugs** | Within 24-48 hours |
+| **General issues** | Within 1 week |
+| **Feature requests** | Varies based on complexity and priority |
+| **Community discussions** | Community members typically respond within hours |
+
+## Additional Resources
+
+- [Changelog](https://github.com/programmablemd/spry/blob/main/CHANGELOG.md) - See what's new
+- [Roadmap](https://github.com/programmablemd/spry/projects) - View planned features
+- [Blog](#) - Read articles and announcements
+- [Twitter](#) - Follow for updates
+
+## Still Need Help?
+
+If you can't find what you're looking for:
+
+1. Search our [documentation](/docs)
+2. Check [GitHub Discussions](https://github.com/programmablemd/spry/discussions)
+3. Ask in our [Discord community](#)
+4. Open a [GitHub issue](https://github.com/programmablemd/spry/issues) as a last resort
+
+Thank you for being part of the Spry community!

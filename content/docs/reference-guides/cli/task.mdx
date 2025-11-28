@@ -1,0 +1,293 @@
+---
+title: task
+description: Execute specific tasks and their dependencies
+icon: Zap
+---
+
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Steps, Step } from 'fumadocs-ui/components/steps';
+
+## Defining Tasks
+
+Tasks are defined using code blocks in your markdown file (default: `spryfile.md`).
+
+## `task` - Task Execution
+
+Execute specific tasks and their dependencies.
+
+### Usage
+
+```bash
+./spry.ts task <taskId> [options]
+```
+
+### Options
+
+| Option | Description |
+|--------|-------------|
+| `--summarize` | Emit execution summary in JSON format |
+
+### Examples
+
+```bash
+# Execute a specific task
+./spry.ts task prepare-db
+
+# Execute a task and all its dependencies
+./spry.ts task setup-db
+
+# Execute with summary
+./spry.ts task deploy --summarize --verbose rich
+```
+
+<Callout>
+When you execute a task, all its dependencies will be executed automatically in the correct order.
+</Callout>
+
+### Add Task Description
+
+To add description in the above task:
+
+````md
+```bash task-name --descr "Add description sentence here"
+```
+````
+
+When you list tasks, the description will appear alongside the task name.
+
+### Add Dependencies to a Task
+
+To add dependencies to a task:
+
+````md
+```bash new-task-name --dep old-task-name
+```
+````
+
+- Here, `new-task-name` refers to the new task being added, and `old-task-name` refers to a pre-existing task already defined in the markdown file.
+
+The `--dep` flag ensures that `old-task-name` executes before `new-task-name`. You can specify multiple dependencies.
+
+### Try It Out
+
+````md
+```bash install-deps --descr "Install project dependencies"
+npm install
+```
+
+```bash build --dep install-deps --descr "Build the project"
+npm run build
+```
+
+```bash deploy --dep build --descr "Deploy to production"
+./deploy.sh
+```
+````
+
+Running `./spry.ts task deploy` will execute: `install-deps` → `build` → `deploy`
+
+## Listing Tasks
+
+### List Executable Tasks
+
+```bash
+./spry.ts task ls
+```
+
+Lists all executable task cells in the default `spryfile.md`.
+
+### List from Custom Markdown File
+
+```bash
+./spry.ts task ls --md example.md
+```
+
+<Callout type="info">
+If you are using a custom markdown file (other than `spryfile.md`), you need to specify it as shown in the command above, because by default, Spry only considers `spryfile.md`.
+</Callout>
+
+### List All Cells
+
+```bash
+./spry.ts task ls --all
+```
+
+Lists all cells, not just executable ones.
+
+### Filter with Cell Query Language (CQL)
+
+```bash
+./spry.ts task ls --select "language:bash"
+```
+
+Use CQL to filter cells based on various criteria. See [CQL documentation](https://github.com/programmablemd/spry/blob/main/lib/markdown/notebook/cql.ts) for advanced queries.
+
+## Output Verbosity
+
+Control the amount of output displayed during task execution.
+
+```bash
+./spry.ts task <task-name> --verbose <format>
+```
+
+### Verbosity Formats
+
+| Format | Description |
+|--------|-------------|
+| `plain` | Simple text output |
+| `rich` | Enhanced output with formatting and colors |
+| `markdown` | Output formatted as markdown |
+
+**Example:**
+
+```bash
+./spry.ts task build --verbose rich
+```
+
+Run `./spry.ts task --help` to see all available options.
+
+## Task Graphs and Filtering
+
+Organize tasks into groups using custom flags for selective execution.
+
+### Define Tasks with Graph Tags
+
+````md
+```bash setup-db --graph init --descr "Initialize database"
+./scripts/init-db.sh
+```
+
+```bash seed-db --graph init --descr "Seed database with data"
+./scripts/seed-db.sh
+```
+
+```bash deploy-app --graph deploy --descr "Deploy application"
+./scripts/deploy.sh
+```
+````
+
+### List Tasks by Graph Tag
+
+```bash
+./spry.ts task ls --select 'flags.graph == "init"'
+```
+
+### Execute Tasks by Graph Tag
+
+```bash
+./spry.ts runbook --select 'flags.graph == "init"'
+```
+
+This executes only the tasks tagged with `--graph init`.
+
+### Custom Tags
+
+You can use any custom tag name instead of `--graph`:
+
+````md
+```bash task-name --environment production --descr "Production task"
+echo "Running in production"
+```
+````
+
+**Filter and execute:**
+
+```bash
+./spry.ts runbook --select 'flags.environment == "production"'
+```
+
+For more details on CQL queries, refer to the [CQL documentation](https://github.com/programmablemd/spry/blob/main/lib/markdown/notebook/cql.ts).
+
+---
+
+## Output Capture
+
+Capture task output to files in various formats.
+
+### Save Output to File
+
+````md
+```bash taskname -C ./output.json --descr "Task with output capture"
+echo '{"status": "success"}'
+```
+````
+
+Supported formats: **JSON**, **CSV**, **XML**
+
+### Capture Flags
+
+| Flag | Description |
+|------|-------------|
+| `-C ./file.*` | Saves the output to the specified file |
+| `-C file.*` | Marks the task as capturable without saving immediately |
+| `--capture` | Long form of the `-C` flag |
+
+### Viewing Capturable Tasks
+
+When listing tasks with `./spry.ts task ls`, tasks with capture enabled will display the **`C` flag** in the "Flag" column.
+
+**Example:**
+
+```bash
+./spry.ts task ls
+```
+
+Output:
+
+```plaintext
+Task ID       | Flag | Description
+------------- | ---- | -----------
+fetch-data    | C    | Fetch data from API
+process-data  |      | Process fetched data
+```
+
+## Visualization
+
+Visualize the task dependency graph to understand execution flow and dependencies.
+
+```bash
+./spry.ts runbook --visualize <style>
+```
+
+### Supported Styles
+
+| Style | Description |
+|-------|-------------|
+| `ascii-tree` | Tree-style ASCII representation |
+| `ascii-workflow` | Workflow-style ASCII diagram |
+| `ascii-flowchart` | Flowchart-style ASCII diagram |
+| `mermaid-js` | Mermaid.js format (can be rendered in markdown viewers) |
+
+**Example:**
+
+```bash
+./spry.ts runbook --visualize ascii-tree
+```
+
+This helps you understand the Directed Acyclic Graph (DAG) of tasks and their execution order.
+
+---
+
+## Running All Tasks
+
+Execute all declared tasks in your markdown file.
+
+```bash
+./spry.ts runbook
+```
+
+This command runs all tasks defined in `spryfile.md` in their dependency order.
+
+### Run All Tasks from Custom File
+
+```bash
+./spry.ts runbook --md example.md
+```
+
+### Run with Filters
+
+Combine with CQL to run specific subsets:
+
+```bash
+./spry.ts runbook --select 'flags.graph == "test"'
+```

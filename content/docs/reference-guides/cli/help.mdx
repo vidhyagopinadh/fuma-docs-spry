@@ -1,0 +1,52 @@
+---
+title: help
+description: Display help information for the Spry CLI
+icon: HelpCircle
+index : 0
+---
+
+import { Callout } from 'fumadocs-ui/components/callout';
+
+## `help` - Spry CLI Help
+
+Display help information for the Spry CLI and its sub-commands.
+
+### Usage
+
+```bash
+./spry.ts --help
+./spry.ts -h
+./spry.ts help
+./spry.ts help [command]
+```
+
+### Options
+
+- `-h, --help` - Show help information
+- `-V, --version` - Show version number (v0.2.13)
+
+### Commands
+
+```
+help [command]  Show this help or the help of a sub-command
+init            Setup Spryfile.md and spry.ts for local dev environment
+doctor          Show dependencies and their availability
+spc             SQLPage Content (spc) CLI
+task <taskId>   Spry Task CLI (execute a specific cell and dependencies)
+runbook         Spry Runbook CLI (execute all cells in DAG order)
+```
+
+### Examples
+
+```bash
+# Display general help
+./spry.ts --help
+
+# Display help for a specific command
+./spry.ts help spc
+./spry.ts help task
+./spry.ts help runbook
+
+# Show version
+./spry.ts --version
+```

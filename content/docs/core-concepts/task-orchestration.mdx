@@ -1,0 +1,117 @@
+---
+title: Task Orchestration
+description: Understand how Spry orchestrates and executes tasks with dependency management
+icon: GitBranch
+index : 1
+---
+
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Card, Cards } from 'fumadocs-ui/components/card';
+
+Understand how Spry orchestrates and executes tasks with dependency management.
+
+## Overview
+
+Spry automatically builds a **Directed Acyclic Graph (DAG)** of your tasks based on their dependencies. Tasks are executed in the optimal order, with independent tasks running in parallel when possible.
+
+## Dependency Declaration
+
+Use the `--dep` flag to declare dependencies between tasks:
+
+```bash
+# setup-db
+sqlite3 app.db < schema.sql
+```
+
+```bash
+# seed-data --dep setup-db
+sqlite3 app.db < seed.sql
+```
+
+```bash
+# deploy --dep seed-data
+echo "Ready to deploy!"
+```
+
+This creates a chain: `setup-db` → `seed-data` → `deploy`.
+
+## Parallel Execution
+
+Tasks without dependencies or with satisfied dependencies can run in parallel:
+
+```bash
+# fetch-users
+curl api.example.com/users > users.json
+```
+
+```bash
+# fetch-products
+curl api.example.com/products > products.json
+```
+
+```bash
+# process-data --dep fetch-users --dep fetch-products
+deno run process.ts
+```
+
+`fetch-users` and `fetch-products` run in parallel, then `process-data` runs after both complete.
+
+## Execution Order
+
+Spry uses **topological sorting** to determine the execution order:
+
+1. Analyze all task dependencies to build a DAG
+2. Identify tasks with no dependencies (entry points)
+3. Execute entry-point tasks (in parallel if possible)
+4. As tasks complete, execute dependent tasks whose prerequisites are met
+5. Continue until all tasks are complete
+
+<Callout type="info">
+💡 **Optimized Execution:** Spry automatically parallelizes independent tasks for faster execution. No configuration needed!
+</Callout>
+
+## Error Handling
+
+If a task fails, all dependent tasks are skipped:
+
+```text
+Task "setup-db" failed with exit code 1
+Skipping dependent tasks: seed-data, deploy
+```
+
+## Running Tasks
+
+### Run Specific Task
+
+Execute a single task and its dependencies:
+
+```bash
+./spry.ts task deploy
+```
+
+### Run All Tasks
+
+Execute all tasks in the Spryfile:
+
+```bash
+./spry.ts runbook
+```
+
+<Callout type="warn">
+⚠️ **Warning:** Circular dependencies are not allowed and will cause an error during DAG construction.
+</Callout>
+
+## Next Steps
+
+<Cards>
+  <Card 
+    title="Executable Markdown" 
+    href="/docs/core-concepts/executable-markdown"
+    description="Learn how to transform code blocks into executable cells with powerful directives"
+  />
+  <Card 
+    title="SQLPage Integration" 
+    href="/docs/core-concepts/sql-page-integration"
+    description="Discover how Spry generates and manages SQLPage applications"
+  />
+</Cards>

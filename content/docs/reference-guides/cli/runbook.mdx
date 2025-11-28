@@ -1,0 +1,92 @@
+---
+title: runbook
+description: Execute all tasks in dependency order
+icon: BookOpen
+---
+
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+
+## `runbook` - Execute All Tasks
+
+Execute all tasks in dependency order (DAG - Directed Acyclic Graph execution).
+
+### Usage
+
+```bash
+./spry.ts runbook [options]
+```
+
+<Callout type="warn" title="Warning">
+This runs ALL executable code blocks. Use with caution in production!
+</Callout>
+
+### Options
+
+| Option | Description |
+|--------|-------------|
+| `--summarize` | Emit execution summary in JSON format |
+| `-s, --select <cql>` | Use Cell Query Language (CQL) to select tasks to run |
+| `--visualize <style>` | Visualize the execution DAG |
+| `--verbose <level>` | Set verbosity level (e.g., `rich`) |
+
+### Examples
+
+#### Basic Execution
+
+```bash
+# Execute all tasks
+./spry.ts runbook
+```
+
+#### With Visualization
+
+```bash
+# Execute with visualization
+./spry.ts runbook --visualize
+
+# Visualize with specific style
+./spry.ts runbook --visualize <style>
+```
+
+#### Filtered Execution
+
+```bash
+# Execute filtered tasks by language
+./spry.ts runbook --select "language:sql"
+
+# Execute tasks by graph flag
+./spry.ts runbook --select 'flags.graph == "init"'
+```
+
+#### With Output Options
+
+```bash
+# Execute with verbose output and summary
+./spry.ts runbook --verbose rich --summarize
+```
+
+<Callout type="info" title="Tip">
+The runbook command automatically handles task dependencies and executes them in the correct order based on the dependency graph.
+</Callout>
+
+---
+
+## `runbook ls` - List Runbook Entries
+
+List all tasks that would be executed in runbook mode.
+
+### Usage
+
+```bash
+./spry.ts runbook ls [options]
+```
+
+### Example
+
+```bash
+# List all tasks in execution order
+./spry.ts runbook ls
+```
+
+This shows you which tasks will be executed and in what order, without actually running them.

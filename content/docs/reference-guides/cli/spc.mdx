@@ -1,0 +1,148 @@
+---
+title: spc
+description: Manage SQLPage content generation from Spryfile.md
+icon: Database
+---
+
+import { Callout } from 'fumadocs-ui/components/callout';
+
+## `spc` - SQLPage Content Management
+
+Main command for SQLPage content generation and management.
+
+### Usage
+
+```bash
+./spry.ts spc [options]
+```
+
+### Options
+
+| Option | Description |
+|--------|-------------|
+| `-p, --package` | Emit SQL package to stdout |
+| `-d, --dialect <dialect>` | SQL dialect for package generation (`sqlite` or `postgres`) |
+| `--fs <directory>` | Materialize SQL files to directory |
+| `--destroy-first` | Remove target directory before materialization |
+| `--watch` | Watch for changes and rebuild automatically |
+| `--with-sqlpage` | Start SQLPage server in watch mode |
+| `--sqlpage-bin <binary>` | SQLPage binary path (default: `sqlpage`) |
+| `-c, --conf <path>` | Write sqlpage.json configuration file |
+
+### Examples
+
+#### Package Generation
+
+```bash
+# Generate SQL package for SQLite
+./spry.ts spc --package
+
+# Generate SQL package for PostgreSQL
+./spry.ts spc --package --dialect postgres
+```
+
+#### File Materialization
+
+```bash
+# Materialize files to directory
+./spry.ts spc --fs dev-src.auto
+
+# With config file generation
+./spry.ts spc --fs dev-src.auto --conf sqlpage/sqlpage.json
+
+# Clean build (remove existing files first)
+./spry.ts spc --fs dev-src.auto --destroy-first
+```
+
+#### Development Mode
+
+```bash
+# Watch mode with auto-rebuild
+./spry.ts spc --fs dev-src.auto --watch
+
+# Watch mode with SQLPage server
+./spry.ts spc --fs dev-src.auto --destroy-first --watch --with-sqlpage
+
+# Custom SQLPage binary
+./spry.ts spc --fs dev-src.auto --watch --with-sqlpage --sqlpage-bin /usr/local/bin/sqlpage
+```
+
+#### Database Deployment
+
+```bash
+# Deploy to SQLite database
+./spry.ts spc --package | sqlite3 app.db
+
+# Deploy to PostgreSQL
+./spry.ts spc --package --dialect postgres | psql $DATABASE_URL
+
+# Deploy to remote PostgreSQL
+./spry.ts spc --package --dialect postgres | psql postgresql://user:pass@host:5432/db
+```
+
+## `spc ls` - List SQLPage Files
+
+List all SQLPage file entries from Markdown sources.
+
+### Usage
+
+```bash
+./spry.ts spc ls [options]
+```
+
+### Options
+
+| Option | Description |
+|--------|-------------|
+| `-i, --pi` | Show cell names and INFO lines |
+| `-I, --pi-attrs` | Show cell names, INFO, and attributes |
+| `-t, --tree` | Display as tree structure |
+
+### Examples
+
+```bash
+# List all SQLPage files
+./spry.ts spc ls
+
+# Show as tree
+./spry.ts spc ls --tree
+
+# Show cell information
+./spry.ts spc ls --pi
+```
+
+---
+
+## `spc cat` - Concatenate File Contents
+
+Output contents of SQLPage files matching glob patterns.
+
+### Usage
+
+```bash
+./spry.ts spc cat -g <glob> [options]
+```
+
+### Options
+
+| Option | Description |
+|--------|-------------|
+| `-g, --glob <pattern>` | Path glob pattern(s) to match (required, repeatable) |
+
+### Examples
+
+```bash
+# Show all SQL files
+./spry.ts spc cat -g "*.sql"
+
+# Show specific files
+./spry.ts spc cat -g "index.sql" -g "admin/*.sql"
+```
+
+<Callout type="info" title="Development Workflow">
+Use `--watch --with-sqlpage` during development for automatic rebuilds and server restarts when your Markdown changes.
+</Callout>
+
+<Callout title="Production Deployment">
+Use `--package` to generate a single SQL script containing all `sqlpage_files` rows, ready for database deployment.
+</Callout>

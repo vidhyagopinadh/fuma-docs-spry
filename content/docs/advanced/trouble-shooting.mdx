@@ -1,0 +1,175 @@
+---
+title: Troubleshooting
+description: Common issues and their solutions
+icon: AlertTriangle
+---
+
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
+
+Common issues and their solutions
+
+## Installation Issues
+
+### Deno not found
+
+**Error:** `command not found: deno`
+
+**Solution:**
+
+```bash
+# Ensure Deno is in your PATH
+export PATH="$HOME/.deno/bin:$PATH"
+
+# Add to ~/.bashrc or ~/.zshrc for permanent fix
+echo 'export PATH="$HOME/.deno/bin:$PATH"' >> ~/.bashrc
+```
+
+### Permission denied
+
+**Error:** `Permission denied: ./spry.ts`
+
+**Solution:**
+
+```bash
+chmod +x spry.ts
+```
+
+---
+
+## Task Execution Issues
+
+### Circular dependency detected
+
+**Error:** `Circular dependency in task graph`
+
+**Solution:**
+
+Check your `--dep` flags. Tasks cannot depend on each other in a cycle.
+
+````md
+# ❌ Wrong: Circular dependency
+```bash task-a --dep task-b
+```
+
+```bash task-b --dep task-a
+```
+
+# ✅ Correct: Linear dependency
+```bash task-a
+```
+
+```bash task-b --dep task-a
+```
+````
+
+### Task not found
+
+**Error:** `Task 'xyz' not found in Spryfile`
+
+**Solution:**
+
+- Check task name spelling in your Spryfile.md
+- Ensure the task has a name after the language identifier
+- Task names are case-sensitive
+
+---
+
+## SQLPage Issues
+
+### Routes not found (404)
+
+SQLPage returns 404 for your routes
+
+**Solutions:**
+
+- Check that files were generated: `ls dev-src.auto/`
+- Verify SQLPage configuration points to correct directory
+- Ensure SQLPage server is running
+- Check `site_prefix` in sqlpage.json
+
+### Database locked
+
+**Error:** `database is locked`
+
+**Solutions:**
+
+```bash
+# Close other connections to the database
+pkill sqlpage
+
+# Remove lock file if it exists
+rm app.db-shm app.db-wal
+
+# Restart SQLPage
+SQLPAGE_SITE_PREFIX="" sqlpage
+```
+
+### Template errors
+
+SQL syntax errors from template interpolation
+
+**Solution:**
+
+Check generated files in `dev-src.auto/` to see actual output
+
+```bash
+cat dev-src.auto/problematic-route.sql
+```
+
+---
+
+## Database Issues
+
+### Connection refused (PostgreSQL)
+
+Cannot connect to PostgreSQL
+
+**Solutions:**
+
+```bash
+# Verify PostgreSQL is running
+pg_isready
+
+# Check connection string
+echo $DATABASE_URL
+
+# Test connection manually
+psql $DATABASE_URL
+```
+
+### Migration failed
+
+Database schema migration errors
+
+**Solutions:**
+
+- Check SQL syntax in schema files
+- Ensure migrations run in correct order
+- Verify database user has CREATE permissions
+- Try running migrations manually to see detailed errors
+
+<Callout type="info" title="Tip">
+Use `./spry.ts --doctor` to check your system dependencies and configuration.
+</Callout>
+
+## Watch Mode Issues
+
+### Files not regenerating
+
+Changes to Spryfile.md don't trigger regeneration
+
+**Solutions:**
+
+- Restart watch mode
+- Check file system permissions
+- Try manual generation without `--watch`
+- Ensure you're editing the correct Spryfile.md
+
+## Getting Help
+
+If you're still experiencing issues:
+
+- Check the [GitHub Issues](https://github.com/programmablemd/spry/issues)
+- Review [GitHub Discussions](https://github.com/programmablemd/spry/discussions)
+- Run `./spry.ts --doctor` and share the output

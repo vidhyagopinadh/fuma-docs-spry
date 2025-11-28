@@ -1,0 +1,453 @@
+---
+title: DAG (Directed Acyclic Graph)
+description: Directed Acyclic Graph (DAG) integration.
+icon: Network
+index : 6
+---
+
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Steps, Step } from 'fumadocs-ui/components/steps';
+
+## Spry DAG Execution Model
+
+### Overview
+
+Spry uses a **Directed Acyclic Graph (DAG)**-based execution model internally for **tasks**, **runbooks**, and **SPC pipelines**.  
+Understanding how DAGs work in Spry helps developers design clean automations, debug execution flow, and reason about dependencies.
+
+This document explains:
+
+- What a DAG is  
+- How Spry models tasks as nodes  
+- How dependencies create edges  
+- How execution order is determined  
+- How branching and parallel execution work  
+- Failure behavior and skip logic  
+- Examples of DAG structures  
+- Relation to Spry commands (`task`, `runbook`, `spc`)
+
+---
+
+### 1. What Is a DAG?
+
+A **Directed Acyclic Graph (DAG)** is a graph structure consisting of:
+
+- **Nodes** — represent tasks or steps  
+- **Directed edges** — represent "A must occur before B"  
+- **Acyclic** — there are *no circular dependencies*
+
+Spry uses DAGs to compute safe execution order and to parallelize independent tasks.
+
+---
+
+### 2. DAG Concepts in Spry
+
+#### 2.1 Node
+
+A **node** is:
+
+- A Spry task  
+- A runbook step  
+- A step from an SPC pipeline  
+
+Nodes represent **work units**.
+
+#### 2.2 Dependency
+
+A **dependency** indicates:
+
+> Task B depends on Task A  
+> → Task A must run before Task B
+
+Dependencies are declared using:
+
+- `--dep` for tasks  
+- Runbook step sequence order  
+- Implicit SPC pipeline ordering
+
+#### 2.3 Directed Edges
+
+A directed edge expresses:
+
+```text
+A → B
+```
+
+Meaning *B cannot execute until A succeeds*.
+
+#### 2.4 Execution Order (Topological Sort)
+
+Spry uses **topological sorting** on the DAG to determine:
+
+1. Valid execution order  
+2. Which tasks can run in parallel  
+3. How failures propagate  
+
+---
+
+### 3. DAG Behavior in Execution
+
+#### 3.1 Branching
+
+A node may fan out into multiple tasks:
+
+```text
+         preprocess
+        /           \
+extract-users   extract-products
+```
+
+#### 3.2 Parallelism
+
+Independent nodes run in parallel automatically:
+
+```text
+task A     task B
+   \       /
+    process
+```
+
+#### 3.3 Skipping & Failure Propagation
+
+If a node fails:
+
+- All **downstream** nodes are skipped  
+- Unrelated branches continue  
+
+Example:
+
+```text
+A → B → C
+A fails → B and C are skipped
+```
+
+---
+
+### 4. Example DAG Structures
+
+#### 4.1 Simple Linear DAG
+
+```text
+A → B → C
+```
+
+Execution:
+
+1. A  
+2. B  
+3. C  
+
+---
+
+#### 4.2 Branching With Join
+
+```text
+      A
+    /   \
+   B     C
+    \   /
+      D
+```
+
+Meaning:
+
+- B and C run **in parallel**  
+- D runs after both finish  
+
+---
+
+#### 4.3 Runbook Example (ASCII Diagram)
+
+```text
+[check-system] → [backup-db] → [deploy] → [smoke-test]
+```
+
+---
+
+#### 4.4 Task Example
+
+If tasks are defined like:
+
+````markdown
+```bash fetch-products --descr "Fetch Products"
+echo "Fetching Products"
+```
+
+```bash fetch-users --descr "Fetch Users"
+echo "Fetching Users"
+```
+
+```bash process-data --dep fetch-users --dep fetch-products --descr "Process Data"
+echo "Processing Data"
+```
+````
+
+**CLI command to execute the task:**
+
+```bash
+./spry.ts task process-data
+```
+
+**Graph:**
+
+```text
+fetch-users     fetch-products
+        \       /
+         process-data
+```
+
+---
+
+### 5. How DAGs Relate to Spry Commands
+
+#### 5.1 Spry task
+
+A Spry Task is a fundamental automation unit in the Spry workflow ecosystem.
+Tasks represent reusable, parameterized, and declarative actions that can be executed independently or as part of larger runbooks, pipelines, or DAGs.
+
+- Each task is a node  
+- Dependencies define edges  
+- Running a task builds a DAG of all upstream nodes  
+
+Example:
+
+```bash
+./spry.ts task deploy
+```
+
+Spry computes:
+
+```text
+setup → build → deploy
+```
+
+#### 5.2 Spry runbook
+
+A **Spry Runbook** is a Markdown-based, executable workflow document used to automate processes in a clean, readable, and structured format. It allows you to write step-by-step workflows directly inside .md files, where each step becomes an executable code cell powered by Spry tasks or scripts.
+
+Spry Runbooks convert your Markdown document into a **Directed Acyclic Graph (DAG)** of execution steps. Spry automatically resolves dependencies, executes steps in the correct order, validates parameters, and provides logs and outputs—making runbooks fully declarative, reproducible, and automation-friendly.
+
+Runbooks are executed in **ordered flow**, which is internally a DAG:
+
+```text
+step1 → step2 → step3
+```
+
+But branching is allowed if defined.
+
+##### Basic Execution
+
+```bash
+./spry.ts runbook --md Spryfile.md
+```
+
+**Explanation:**  
+Executes every cell found in `Spryfile.md` based on dependency ordering. Useful for full-environment setup, provisioning, or complex workflows.
+
+---
+
+##### Visualize DAG
+
+**CLI Command:**
+
+```bash
+./spry.ts runbook --md Spryfile.md --visualize ascii-tree
+```
+
+**Example Task:**
+
+````markdown
+```bash fetch-products --descr "Fetch Products"
+echo "Fetching Products"
+```
+
+```bash fetch-users --descr "Fetch Users"
+echo "Fetching Users"
+```
+
+```bash process-data --dep fetch-users --dep fetch-products --descr "Process Data"
+echo "Processing Data"
+```
+````
+
+**Graph:**
+
+```text
+fetch-products
+  └─▶ process-data
+fetch-users
+  └─▶ process-data
+```
+
+**Explanation:**  
+Shows the DAG in a readable ASCII tree or workflow diagram.  
+Helpful for debugging task dependencies or documenting system flows.
+
+Other visualization styles:
+
+```bash
+--visualize ascii-flowchart
+--visualize ascii-workflow
+```
+
+---
+
+##### Mermaid Diagram Output
+
+```bash
+./spry.ts runbook --md Spryfile.md --visualize mermaid-js > dag.mmd
+```
+
+**Explanation:**  
+Generates MermaidJS output (used by documentation systems).  
+Paste `dag.mmd` directly into docs to automatically render graphs.
+
+---
+
+##### Verbose Execution
+
+```bash
+./spry.ts runbook --md Spryfile.md --verbose markdown
+```
+
+**Explanation:**  
+Shows each cell execution, timing, dependencies, and results with different styles:
+
+- `plain` — clean terminal logs  
+- `rich` — colored, formatted logs  
+- `markdown` — markdown-formatted output for documentation
+
+This is ideal for step-by-step walkthroughs and debugging.
+
+---
+
+##### JSON Summary
+
+```bash
+./spry.ts runbook --md Spryfile.md --summarize > run-summary.json
+```
+
+**Explanation:**  
+Produces a machine-readable JSON report of:
+
+- All executed steps  
+- Their status (success/failure/skipped)  
+- Execution times  
+- DAG ordering  
+
+Useful for CI pipelines and automated verification.
+
+#### 5.3 Spry spc
+
+**Spry SPC** provides Statistical Process Control capabilities within the Spry workflow and automation ecosystem. It helps monitor, analyse, and control processes using statistical methods, applied to software workflows such as CI/CD, data pipelines, and automated runbooks.
+
+##### Key Features
+
+###### 1. Control Charts
+
+Spry SPC supports:
+
+- X-bar charts (average performance)
+- R charts (variation range)
+- P charts (pass/fail ratio)
+- U charts (defects per unit)
+
+###### 2. Process Variation Monitoring
+
+Helps detect:
+
+- Spikes in pipeline time  
+- Increased error rates  
+- Anomalies in task results  
+- Data quality fluctuations  
+
+###### 3. Rule-Based Alerts
+
+Examples:
+
+- Alert when failure rate > 5%  
+- Notify if build time exceeds upper control limits  
+- Warn when data quality drops below thresholds  
+
+###### 4. Trend Analysis
+
+Identifies:
+
+- Long-term performance drift  
+- Seasonal patterns  
+- Gradual process degradation  
+- Automation improvements  
+
+###### 5. Integration with Spry Runbooks
+
+SPC works seamlessly with runbooks to:
+
+- Trigger workflows  
+- Update dashboards  
+- Support SLO/SLI pipelines  
+- Enable automated remediation  
+
+##### Benefits
+
+- Increased workflow reliability  
+- Early anomaly detection  
+- Data-driven process visibility  
+- Reduced failures  
+- Better optimisation decisions  
+
+SPC pipelines also follow DAG rules:
+
+- Each block = node  
+- Block dependencies define edges  
+
+---
+
+### 6. Real Spry Example
+
+#### `Spryfile.md`
+
+##### 1. Linear DAG (setup-db → migrate → seed → analyze)
+
+````markdown
+```bash setup-db --descr "Set up database"
+echo "Setting up DB"
+```
+
+```bash migrate --dep setup-db --descr "Run DB migrations"
+echo "Running migrations"
+```
+
+```bash seed --dep migrate --descr "Seed initial data"
+echo "Seeding..."
+```
+
+```bash analyze --dep seed --descr "Analyze data"
+echo "Analysis complete"
+```
+````
+
+##### Run with dependencies
+
+```bash
+./spry.ts task analyze
+```
+
+DAG:
+
+```text
+setup-db → migrate → seed → analyze
+```
+
+---
+
+### 7. Summary
+
+<Callout type="info">
+- A DAG is the **core engine** behind Spry execution.  
+- Nodes = tasks / runbook steps / SPC blocks  
+- Edges = dependencies  
+- Spry uses topological sort to compute execution order  
+- Parallelism is automatic  
+- Failures skip downstream tasks  
+- DAGs make Spry workflows predictable and debuggable  
+</Callout>

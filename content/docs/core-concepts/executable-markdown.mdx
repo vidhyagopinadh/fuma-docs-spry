@@ -1,0 +1,155 @@
+---
+title: Executable Markdown
+description: Transform code blocks into executable cells with powerful directives
+icon: Code
+index : 0
+---
+
+import { Card, Cards } from 'fumadocs-ui/components/card';
+import { Callout } from 'fumadocs-ui/components/callout';
+
+## What is Executable Markdown?
+
+In Spry, fenced code blocks in your Markdown files become executable cells. Each code block can:
+
+- Execute code in multiple languages (SQL, Bash, TypeScript, Python)
+- Define dependencies on other code blocks
+- Include metadata for routing and caching
+- Be named and referenced throughout your pipeline
+
+## Basic Syntax
+
+A basic executable code block looks like this:
+
+````markdown
+```bash
+echo "Hello from Spry!"
+```
+````
+
+## Named Tasks
+
+Give your code blocks names to reference them elsewhere:
+
+````markdown
+```bash setup-db
+sqlite3 app.db < schema.sql
+```
+````
+
+The task name comes after the language identifier.
+
+## Directives
+
+Directives are special flags that control how code blocks are executed:
+
+### --descr
+
+Add a description to your task:
+
+````markdown
+```bash setup-db --descr "Initialize the database"
+sqlite3 app.db < schema.sql
+```
+````
+
+### --dep
+
+Define dependencies on other tasks:
+
+````markdown
+```bash seed-data --dep setup-db
+sqlite3 app.db < seed.sql
+```
+````
+
+<Callout>
+This task will only run after `setup-db` completes successfully.
+</Callout>
+
+### Multiple Dependencies
+
+Tasks can depend on multiple other tasks:
+
+````markdown
+```bash deploy --dep setup-db --dep seed-data
+echo "Deployment complete"
+```
+````
+
+## SQL Code Blocks
+
+SQL code blocks are special - they can become SQLPage routes:
+
+````markdown
+```sql index.sql
+SELECT 'hero' AS component,
+       'Welcome!' AS title,
+       'Build apps with Spry' AS description;
+```
+````
+
+The filename (e.g., `index.sql`) becomes the route path.
+
+## Metadata
+
+Add JSON5 metadata to control routing and other behaviors:
+
+````markdown
+```sql users.sql { route: '/admin/users', cache: 300 }
+SELECT 'table' AS component;
+SELECT id, name, email FROM users;
+```
+````
+
+## Supported Languages
+
+<Cards>
+  <Card title="SQL">
+    Primary language for SQLPage routes and database operations
+  </Card>
+
+  <Card title="Bash">
+    Shell commands for setup, deployment, and file operations
+  </Card>
+
+  <Card title="TypeScript">
+    Complex logic, API calls, and data transformations
+  </Card>
+
+  <Card title="Python">
+    Data analysis, ML, and scientific computing tasks
+  </Card>
+</Cards>
+
+## Complete Example
+
+Here's a complete example showing multiple features:
+
+````markdown
+# My Application
+
+## Setup Tasks
+```bash create-db --descr "Create database file"
+rm -f app.db && touch app.db
+```
+
+```bash setup-schema --dep create-db --descr "Setup schema"
+sqlite3 app.db < schema.sql
+```
+
+## Application Routes
+```sql index.sql { route: '/' }
+SELECT 'hero' AS component,
+       'My App' AS title;
+```
+
+```sql users.sql { route: '/users', cache: 60 }
+SELECT 'table' AS component;
+SELECT * FROM users;
+```
+````
+
+<Callout type="info">
+Explore [Task Orchestration](/docs/core-concepts/task-orchestration) to learn how Spry executes your code blocks in the optimal order.
+</Callout>

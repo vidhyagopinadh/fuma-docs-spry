@@ -1,0 +1,123 @@
+---
+title: CLI Commands
+description: Manage Spry CLI Commands
+icon: Terminal
+---
+
+import { Callout } from 'fumadocs-ui/components/callout';
+
+## Command Overview
+
+The Spry CLI provides commands for managing executable Markdown notebooks, SQLPage content, and task orchestration.
+
+### General Commands
+
+- [`./spry.ts --help`](./cli/help) - Display help information for the CLI
+- [`./spry.ts --version`](./cli/version) - Show the current version number
+- [`./spry.ts init`](./cli/init) - Initialize Spryfile.md and spry.ts for local development
+- [`./spry.ts init --dialect postgres`](./cli/init#examples) - Initialize with PostgreSQL
+- [`./spry.ts init --force`](./cli/init#examples) - Force reinitialize
+- [`./spry.ts doctor`](./cli/doctor) - Check dependencies and their availability
+
+### MDAST Commands
+
+Markdown Abstract Syntax Tree analysis and manipulation:
+
+- [`./spry.ts mdast ls Spryfile.md`](./cli/mdast#path-arguments) - List all MDAST nodes in Spryfile
+- [`./spry.ts mdast ls README.md docs/guide.md`](./cli/mdast#path-arguments) - List nodes from multiple files
+- [`./spry.ts mdast ls docs/*.md`](./cli/mdast#path-arguments) - List nodes from all Markdown files in docs directory
+- [`./spry.ts mdast identifiers Spryfile.md`](./cli/mdast#2-identifiers---list-node-identifiers) - List all node identifiers
+- [`./spry.ts mdast identifiers docs/*.md`](./cli/mdast#3-analysis-workflow) - List identifiers across multiple files
+- [`./spry.ts mdast identifiers Spryfile.md | sort | uniq`](./cli/mdast#3-analysis-workflow) - List unique identifiers sorted
+- [`./spry.ts mdast identifiers docs/*.md | sort | uniq -d`](./cli/mdast#3-analysis-workflow) - Find duplicate identifiers
+- [`./spry.ts mdast tree Spryfile.md`](./cli/mdast#1-document-exploration-workflow) - Show document hierarchy
+- [`./spry.ts mdast tree docs/*.md`](./cli/mdast#1-document-exploration-workflow) - Show hierarchy for all docs
+- [`./spry.ts mdast class Spryfile.md`](./cli/mdast#4-class---classification-hierarchy) - Show all classifications
+- [`./spry.ts mdast schema Spryfile.md`](./cli/mdast#5-schema---section-schema-hierarchy) - Validate document schema
+- [`./spry.ts mdast schema docs/*.md`](./cli/mdast#5-schema---section-schema-hierarchy) - Validate multiple documents
+
+### SPC Commands
+
+SQLPage Content generation and management:
+
+#### Package Generation
+
+- [`./spry.ts spc --package`](./cli/spc#package-generation) - Generate SQL package for SQLite
+- [`./spry.ts spc --package --dialect postgres`](./cli/spc#package-generation) - Generate SQL package for PostgreSQL
+
+#### File Materialization
+
+- [`./spry.ts spc --fs dev-src.auto`](./cli/spc#file-materialization) - Materialize files to directory
+- [`./spry.ts spc --fs dev-src.auto --conf sqlpage/sqlpage.json`](./cli/spc#file-materialization) - Materialize files with config file
+- [`./spry.ts spc --fs dev-src.auto --destroy-first`](./cli/spc#file-materialization) - Clean build (remove existing files first)
+
+#### Development Mode
+
+- [`./spry.ts spc --fs dev-src.auto --watch`](./cli/spc#development-mode) - Watch mode with auto-rebuild
+- [`./spry.ts spc --fs dev-src.auto --destroy-first --watch --with-sqlpage`](./cli/spc#development-mode) - Watch mode with SQLPage server
+- [`./spry.ts spc --fs dev-src.auto --watch --with-sqlpage --sqlpage-bin /usr/local/bin/sqlpage`](./cli/spc#development-mode) - Watch mode with custom SQLPage binary
+
+#### Database Deployment
+
+- [`./spry.ts spc --package | sqlite3 app.db`](./cli/spc#database-deployment) - Deploy to SQLite database
+- [`./spry.ts spc --package --dialect postgres | psql $DATABASE_URL`](./cli/spc#database-deployment) - Deploy to PostgreSQL
+- [`./spry.ts spc --package --dialect postgres | psql postgresql://user:pass@host:5432/db`](./cli/spc#database-deployment) - Deploy to remote PostgreSQL
+
+#### File Operations
+
+- [`./spry.ts spc ls`](./cli/spc#spc-ls---list-sqlpage-files) - List SQLPage files
+- [`./spry.ts spc cat -g "*.sql"`](./cli/spc#spc-cat---concatenate-file-contents) - Show file contents matching glob pattern
+
+### Task Commands
+
+Task execution and management:
+
+#### Execute Tasks
+
+- [`./spry.ts task prepare-db`](./cli/task) - Execute prepare-db task
+- [`./spry.ts task deploy --summarize --verbose rich`](./cli/task#examples) - Execute deploy task with summary and verbose output
+- [`./spry.ts task build --verbose rich`](./cli/task#viewing-capturable-tasks) - Execute build task with verbose output
+
+#### List Tasks
+
+- [`./spry.ts task ls`](./cli/task#list-executable-tasks) - List all available tasks
+- [`./spry.ts task ls --md example.md`](./cli/task#list-from-custom-markdown-file) - List tasks from specific file
+- [`./spry.ts task ls --all`](./cli/task#list-all-cells) - List all tasks with details
+- [`./spry.ts task ls --select "language:bash"`](./cli/task#filter-with-cell-query-language-cql) - List tasks by language
+- [`./spry.ts task ls --select 'flags.graph == "init"'`](./cli/task#list-tasks-by-graph-tag) - List tasks by graph flag
+
+### Runbook Commands
+
+Runbook execution and visualization:
+
+#### Execute Runbooks
+
+- [`./spry.ts runbook`](./cli/runbook) - Execute all tasks in DAG order
+- [`./spry.ts runbook --select "language:sql"`](./cli/runbook#filtered-execution) - Execute filtered tasks by language
+- [`./spry.ts runbook --select 'flags.graph == "init"'`](./cli/runbook#filtered-execution) - Execute tasks by graph flag
+- [`./spry.ts runbook --verbose rich --summarize`](./cli/runbook#with-output-options) - Execute with verbose output and summary
+
+#### Visualization
+
+- [`./spry.ts runbook --visualize`](./cli/runbook#with-visualization) - Visualize execution graph
+- [`./spry.ts runbook --visualize <style>`](./cli/runbook#with-visualization) - Visualize with specific style
+
+#### List Runbooks
+
+- [`./spry.ts runbook ls`](./cli/runbook#runbook-ls---list-runbook-entries) - List runbook entries
+
+### Quality Folio Commands
+
+- [`./spry.ts qf ls`](./cli/qualityfolio-cli) - List quality folio items
+
+## Command Structure
+
+All commands follow this pattern:
+
+```bash
+./spry.ts [command] [subcommand] [options] [arguments]
+```
+
+<Callout>
+See individual command pages for detailed usage and examples.
+</Callout>

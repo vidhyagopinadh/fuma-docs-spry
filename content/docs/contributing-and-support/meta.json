@@ -1,0 +1,9 @@
+{
+  "title": "Contributing and Support",
+  "icon": "Heart",
+  "pages": [
+    "contributing-to-spry",
+    "spry-help"
+  ],
+  "root": true
+}

@@ -1,0 +1,169 @@
+---
+title: Quick Start
+description: Build reproducible data and AI pipelines with executable Markdown
+icon: Play
+index  : 2
+---
+
+import { Tabs, Tab } from 'fumadocs-ui/components/tabs';
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Steps, Step } from 'fumadocs-ui/components/steps';
+import { Card, Cards } from 'fumadocs-ui/components/card';
+
+This guide will walk you through creating and deploying your first SQLPage application using Spry.
+
+<Callout>
+  Make sure you've completed the [installation](/docs/getting-started/installation) steps before continuing.
+</Callout>
+
+## Development Workflow
+
+Follow these steps to generate SQLPage assets and start the development server:
+
+<Tabs items={['SQLite', 'PostgreSQL']}>
+  <Tab value="SQLite">
+    ### SQLite Setup
+    
+    <Steps>
+      <Step>
+        ### Generate SQLPage Source Files
+        
+        Generate the SQLPage source files from your Spryfile.md:
+        
+        ```bash
+        ./spry.ts spc --fs dev-src.auto --destroy-first --conf sqlpage/sqlpage.json
+        ```
+      </Step>
+
+      <Step>
+        ### Start Development Server
+        
+        Run Spry in watch mode for live reloading:
+        
+        ```bash
+        ./spry.ts spc --fs dev-src.auto --destroy-first --conf sqlpage/sqlpage.json --watch
+        ```
+        
+        <Callout type="info" title="Auto-Reload">
+          The `--watch` flag automatically regenerates files when your Spryfile.md changes!
+        </Callout>
+      </Step>
+
+      <Step>
+        ### Deploy to Database
+        
+        Deploy SQLPage components to your SQLite database:
+        
+        ```bash
+        ./spry.ts task deploy
+        ```
+      </Step>
+
+      <Step>
+        ### Start SQLPage Server
+        
+        Launch the SQLPage server:
+        
+        ```bash
+        SQLPAGE_SITE_PREFIX="" sqlpage
+        ```
+        
+        Your application will be available at `http://localhost:8080`
+      </Step>
+    </Steps>
+  </Tab>
+  
+  <Tab value="PostgreSQL">
+    ### PostgreSQL Setup
+    
+    <Steps>
+      <Step>
+        ### Set Database Connection
+        
+        Configure your PostgreSQL connection string:
+        
+        ```bash
+        export DATABASE_URL="postgresql://user:password@localhost:5432/mydb"
+        ```
+      </Step>
+
+      <Step>
+        ### Generate SQLPage Source Files
+        
+        ```bash
+        ./spry.ts spc --fs dev-src.auto --destroy-first --conf sqlpage/sqlpage.json
+        ```
+      </Step>
+
+      <Step>
+        ### Start Development Server
+        
+        ```bash
+        ./spry.ts spc --fs dev-src.auto --destroy-first --conf sqlpage/sqlpage.json --watch
+        ```
+      </Step>
+
+      <Step>
+        ### Deploy to Database
+        
+        ```bash
+        ./spry.ts task deploy
+        ```
+      </Step>
+
+      <Step>
+        ### Start SQLPage Server
+        
+        ```bash
+        SQLPAGE_SITE_PREFIX="" sqlpage
+        ```
+      </Step>
+    </Steps>
+  </Tab>
+</Tabs>
+
+## Your First Spryfile
+
+The `Spryfile.md` is where you define your application. Here's a simple example:
+
+````markdown
+# My First Spry App
+
+## Database Setup
+
+```bash prepare-db --descr "Initialize database"
+sqlite3 app.db < schema.sql
+```
+
+## Home Page
+
+```sql index.sql
+SELECT 'text' AS component,
+       'Welcome to Spry!' AS title,
+       'This is my first SQLPage app' AS contents;
+```
+````
+
+## Understanding the Workflow
+
+<Cards>
+  <Card title="1. Write in Markdown">
+    Define your application logic, routes, and tasks in `Spryfile.md`
+  </Card>
+
+  <Card title="2. Generate Assets">
+    Spry converts your Markdown into SQLPage-compatible files
+  </Card>
+
+  <Card title="3. Deploy">
+    Run tasks and deploy your application to the database
+  </Card>
+
+  <Card title="4. Serve">
+    SQLPage serves your application directly from the database
+  </Card>
+</Cards>
+
+<Callout type="info" title="Next Steps">
+  Learn more about [Executable Markdown](/docs/core-concepts/executable-markdown) to understand how to write powerful Spryfiles.
+</Callout>

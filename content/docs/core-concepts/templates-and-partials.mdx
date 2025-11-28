@@ -1,0 +1,148 @@
+---
+title: Templates & Partials
+description: An overview of the Reusable code snippets and template interpolation in Spry.
+icon: Package
+index : 3
+---
+
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+
+Reusable code snippets and template interpolation in Spry
+
+## Template Interpolation
+
+Use JavaScript template literals inside your SQL code blocks for dynamic content generation:
+
+````markdown
+```sql users.sql
+SELECT 'table' AS component;
+SELECT ${paginate("users", 20)} AS page_size;
+```
+````
+
+## Built-in Template Functions
+
+Spry provides several built-in template functions:
+
+### Pagination
+
+Add pagination to your queries:
+
+```sql
+SELECT ${paginate("table_name", 25)} AS component;
+```
+
+### Navigation Links
+
+Generate navigation menu items:
+
+```sql
+SELECT ${md.link("route", ["param1", "param2"], "label")} AS content;
+```
+
+### Breadcrumbs
+
+Automatically generate breadcrumb navigation:
+
+```sql
+SELECT ${md.breadcrumbs()} AS component;
+```
+
+## Partials System
+
+Partials are reusable code snippets that can be injected into multiple places:
+
+`````markdown
+# Partials
+
+```sql _partial_header.sql
+SELECT 'shell' AS component,
+       'My App' AS title,
+       'menu' AS menu_component;
+```
+
+# Use the partial
+
+```sql index.sql
+${include('_partial_header')}
+
+SELECT 'hero' AS component,
+       'Welcome!' AS title;
+```
+`````
+
+## Auto-Injection with Globs
+
+Use glob patterns to automatically inject partials into matching files:
+
+````markdown
+```sql _partial_auth.sql { inject: "admin/**/*.sql" }
+-- Check if user is authenticated
+SELECT CASE 
+  WHEN NOT EXISTS (SELECT 1 FROM sessions WHERE active = 1)
+  THEN sqlpage.redirect('/login')
+END;
+```
+````
+
+This partial will be automatically injected at the top of all SQL files in the `admin/` directory.
+
+## Variable Substitution
+
+Define variables and use them throughout your Spryfile:
+
+`````markdown
+# Configuration
+
+```javascript config
+export const APP_NAME = "My Application";
+export const VERSION = "1.0.0";
+export const ITEMS_PER_PAGE = 25;
+```
+
+# Use variables
+
+```sql index.sql
+SELECT 'hero' AS component,
+       '${APP_NAME}' AS title,
+       'Version ${VERSION}' AS subtitle;
+```
+`````
+
+<Callout type="info">
+Partials starting with underscore (`_`) are not generated as standalone routes.
+</Callout>
+
+## Practical Example
+
+Here's a complete example using templates and partials:
+
+`````markdown
+# Shared Layout
+
+```sql _layout.sql { inject: "**/*.sql" }
+SELECT 'shell' AS component,
+       'My App' AS title,
+       'menu' AS menu_component;
+
+SELECT 'menu' AS component;
+SELECT '/' AS link, 'Home' AS title;
+SELECT '/about' AS link, 'About' AS title;
+SELECT '/contact' AS link, 'Contact' AS title;
+```
+
+# Homepage
+
+```sql index.sql
+SELECT 'hero' AS component,
+       'Welcome!' AS title;
+
+SELECT 'card' AS component, 3 AS columns;
+${generateFeatureCards(['Fast', 'Simple', 'Powerful'])}
+```
+`````
+
+<Callout>
+Template functions have access to all Deno APIs and can perform complex computations.
+</Callout>

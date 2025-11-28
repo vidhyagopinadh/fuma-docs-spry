@@ -1,0 +1,130 @@
+---
+title: SQLPage Integration
+description: Learn how Spry generates and manages SQLPage applications
+icon: Database
+index : 2
+---
+
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Tabs, Tab } from 'fumadocs-ui/components/tabs';
+
+Learn how Spry generates and manages SQLPage applications.
+
+## What is SQLPage?
+
+SQLPage is a framework for building database-driven web applications using only SQL. Spry makes it even easier by letting you define entire SQLPage apps in Markdown.
+
+## Creating Routes
+
+SQL code blocks automatically become SQLPage routes:
+
+````markdown
+```sql index.sql
+SELECT 'hero' AS component,
+       'Welcome to My App' AS title,
+       'Built with Spry and SQLPage' AS description;
+```
+
+```sql about.sql
+SELECT 'text' AS component,
+       'About Us' AS title,
+       'Learn more about our company' AS contents;
+```
+````
+
+These create routes at `/` and `/about`.
+
+## Custom Routes
+
+Use metadata to specify custom route paths:
+
+````markdown
+```sql admin-users.sql { route: '/admin/users' }
+SELECT 'table' AS component;
+SELECT id, name, email FROM users WHERE role = 'admin';
+```
+````
+
+## Development vs Production
+
+Spry supports two deployment modes:
+
+<Tabs items={['File System Mode', 'Database Mode']}>
+  <Tab value="File System Mode">
+    ### File System Mode (Development)
+    
+    Generate `.sql` files to a directory. Fast iteration with `--watch`:
+    
+    ```bash
+    ./spry.ts spc --fs dev-src.auto --watch
+    ```
+    
+    Perfect for rapid development with live reloading.
+  </Tab>
+  
+  <Tab value="Database Mode">
+    ### Database Mode (Production)
+    
+    Store routes directly in the database. Single-database deployment:
+    
+    ```bash
+    ./spry.ts task deploy
+    ```
+    
+    Ideal for production deployments with all routes in the database.
+  </Tab>
+</Tabs>
+
+## Automatic Navigation
+
+Spry can automatically generate navigation menus based on your routes:
+
+````markdown
+```sql _navigation.sql
+SELECT 'menu' AS component;
+${md.navigation()}
+```
+````
+
+## SQLPage Components
+
+Use all standard SQLPage components in your routes:
+
+````markdown
+```sql dashboard.sql
+-- Hero section
+SELECT 'hero' AS component,
+       'Dashboard' AS title;
+
+-- Statistics cards
+SELECT 'card' AS component, 3 AS columns;
+SELECT 'Users' AS title, 
+       (SELECT COUNT(*) FROM users) AS value;
+SELECT 'Products' AS title,
+       (SELECT COUNT(*) FROM products) AS value;
+SELECT 'Orders' AS title,
+       (SELECT COUNT(*) FROM orders) AS value;
+
+-- Recent activity table
+SELECT 'table' AS component;
+SELECT * FROM recent_activity LIMIT 10;
+```
+````
+
+<Callout type="info">
+Check the [SQLPage documentation](https://sql.ophir.dev/documentation.sql) for all available components.
+</Callout>
+
+## Configuration
+
+Configure SQLPage behavior in `sqlpage/sqlpage.json`:
+
+```json
+{
+  "database_url": "sqlite://app.db",
+  "port": 8080,
+  "site_title": "My Spry App",
+  "site_prefix": "",
+  "max_uploaded_file_size": 10485760
+}
+```
