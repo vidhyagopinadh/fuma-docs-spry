@@ -22,7 +22,7 @@ Keep dependency chains shallow. Deep nesting makes debugging harder.
 </Callout>
 
 ````md
-# ✅ Good: Clear, flat structure
+#  Good: Clear, flat structure
 ```bash setup-db
 sqlite3 app.db < schema.sql
 ```
@@ -31,7 +31,7 @@ sqlite3 app.db < schema.sql
 sqlite3 app.db < seed.sql
 ```
 
-# ❌ Avoid: Deep nesting
+#  Avoid: Deep nesting
 ```bash task1
 echo "step 1"
 ```
@@ -55,7 +55,7 @@ echo "step 4"
 ## Development Workflow
 
 <Steps>
-<Step>
+<Step key="start-watch">
 ### Start with Watch Mode
 
 Use `--watch` during development for instant feedback:
@@ -65,7 +65,7 @@ Use `--watch` during development for instant feedback:
 ```
 </Step>
 
-<Step>
+<Step key="test-inc">
 ### Test Incrementally
 
 Test individual tasks before running the entire runbook:
@@ -75,7 +75,7 @@ Test individual tasks before running the entire runbook:
 ```
 </Step>
 
-<Step>
+<Step key="ver-ctl">
 ### Version Control
 
 Commit your Spryfile.md and ignore generated files (`dev-src.auto/`, `*.db`).

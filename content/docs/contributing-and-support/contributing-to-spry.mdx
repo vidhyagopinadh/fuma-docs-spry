@@ -35,13 +35,13 @@ Before contributing to Spry, ensure you have:
 ### Setting Up Your Development Environment
 
 <Steps>
-<Step>
+<Step key="fork-repo">
 ### Fork the repository
 
 Visit [github.com/programmablemd/spry](https://github.com/programmablemd/spry) and click the "Fork" button.
 </Step>
 
-<Step>
+<Step key="fork-clone">
 ### Clone your fork
 
 ```bash
@@ -50,7 +50,7 @@ cd spry
 ```
 </Step>
 
-<Step>
+<Step key="upstream-remote">
 ### Add upstream remote
 
 ```bash
@@ -58,7 +58,7 @@ git remote add upstream https://github.com/programmablemd/spry.git
 ```
 </Step>
 
-<Step>
+<Step key="install-dep">
 ### Install dependencies
 
 ```bash
@@ -66,7 +66,7 @@ deno cache --reload lib/mod.ts
 ```
 </Step>
 
-<Step>
+<Step key="verify-setup">
 ### Verify your setup
 
 ```bash
@@ -95,7 +95,7 @@ Use descriptive branch names:
 ### Making Changes
 
 <Steps>
-<Step>
+<Step key="write-code">
 ### Write clean, maintainable code
 
 - Follow TypeScript best practices
@@ -104,7 +104,7 @@ Use descriptive branch names:
 - Keep functions focused and small
 </Step>
 
-<Step>
+<Step key="test-change">
 ### Test your changes
 
 ```bash
@@ -112,7 +112,7 @@ deno test
 ```
 </Step>
 
-<Step>
+<Step key="update-doc">
 ### Update documentation
 
 - Update relevant `.md` files
@@ -120,7 +120,7 @@ deno test
 - Update API documentation if needed
 </Step>
 
-<Step>
+<Step key="comit-change">
 ### Commit your changes
 
 ```bash
@@ -159,7 +159,7 @@ refactor: simplify task dependency resolution
 ### Before Submitting
 
 <Steps>
-<Step>
+<Step key="sync-upstream">
 ### Sync with upstream
 
 ```bash
@@ -168,7 +168,7 @@ git rebase upstream/main
 ```
 </Step>
 
-<Step>
+<Step key="run-test">
 ### Run tests
 
 ```bash
@@ -176,7 +176,7 @@ deno test
 ```
 </Step>
 
-<Step>
+<Step key="format-code">
 ### Format your code
 
 ```bash
@@ -184,7 +184,7 @@ deno fmt
 ```
 </Step>
 
-<Step>
+<Step key="lint-code">
 ### Lint your code
 
 ```bash
@@ -196,7 +196,7 @@ deno lint
 ### Creating the Pull Request
 
 <Steps>
-<Step>
+<Step key="push-branch">
 ### Push your branch
 
 ```bash
@@ -204,7 +204,7 @@ git push origin feature/your-feature-name
 ```
 </Step>
 
-<Step>
+<Step key="pull-req">
 ### Open a pull request
 
 - Go to your fork on GitHub
@@ -213,7 +213,7 @@ git push origin feature/your-feature-name
 - Fill in the PR template
 </Step>
 
-<Step>
+<Step key="pr-inst">
 ### PR Title and Description
 
 - Use a clear, descriptive title
@@ -386,25 +386,25 @@ We are committed to providing a welcoming and inclusive environment. Please:
 ### Review Process
 
 <Steps>
-<Step>
+<Step key="init-review">
 ### Initial Review
 
 Maintainers will review within 1-2 weeks
 </Step>
 
-<Step>
+<Step key="feedback">
 ### Feedback
 
 Address any requested changes
 </Step>
 
-<Step>
+<Step key="approve">
 ### Approval
 
 Once approved, PR will be merged
 </Step>
 
-<Step>
+<Step key="release">
 ### Release
 
 Changes included in next release

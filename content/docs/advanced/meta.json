@@ -1,6 +1,9 @@
 {
   "title": "Advanced",
   "icon": "Zap",
-  "pages": ["best-practices", "trouble-shooting"],
+  "pages": [
+    "best-practices", 
+    "trouble-shooting"
+  ],
   "root": true
 }

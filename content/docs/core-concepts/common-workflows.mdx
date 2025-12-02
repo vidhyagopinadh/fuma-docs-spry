@@ -12,7 +12,7 @@ import { Steps, Step } from 'fumadocs-ui/components/steps';
 Follow these steps to set up and run your development environment:
 
 <Steps>
-<Step>
+<Step key="init-proj">
 ### Initialize project
 
 ```bash
@@ -22,7 +22,7 @@ Follow these steps to set up and run your development environment:
 Initializes the project structure and dependencies.
 </Step>
 
-<Step>
+<Step key="live-reload">
 ### Start development server with live reload
 
 ```bash
@@ -32,7 +32,7 @@ Initializes the project structure and dependencies.
 Launches a development server with automatic file watching and live reload.
 </Step>
 
-<Step>
+<Step key="list-task">
 ### List and execute tasks as needed
 
 ```bash
@@ -51,7 +51,7 @@ Provides task management capabilities for database preparation and other setup t
 Deploy your application to production with these steps:
 
 <Steps>
-<Step>
+<Step key="clean-art">
 ### Clean development artifacts
 
 ```bash
@@ -61,7 +61,7 @@ rm -rf dev-src.auto
 Removes temporary development files.
 </Step>
 
-<Step>
+<Step key="deploy-db">
 ### Package and deploy to database
 
 ```bash
@@ -71,7 +71,7 @@ Removes temporary development files.
 Packages the application and deploys it to the production database.
 </Step>
 
-<Step>
+<Step key="start-server">
 ### Start SQLPage server
 
 ```bash
@@ -89,7 +89,7 @@ Starts the SQLPage server to serve the application.
 Manage and execute tasks efficiently:
 
 <Steps>
-<Step>
+<Step key="list-task">
 ### List available tasks
 
 ```bash
@@ -99,7 +99,7 @@ Manage and execute tasks efficiently:
 Displays all available tasks in the project.
 </Step>
 
-<Step>
+<Step key="spec-task">
 ### Execute specific task
 
 ```bash
@@ -109,7 +109,7 @@ Displays all available tasks in the project.
 Runs a specific task with detailed verbose output.
 </Step>
 
-<Step>
+<Step key="all-task">
 ### Execute all tasks in order
 
 ```bash
