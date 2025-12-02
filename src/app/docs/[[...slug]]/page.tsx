@@ -9,7 +9,6 @@ import { notFound } from 'next/navigation';
 import { getMDXComponents } from '@/mdx-components';
 import type { Metadata } from 'next';
 import { createRelativeLink } from 'fumadocs-ui/mdx';
-import { getGithubLastEdit } from 'fumadocs-core/content/github';
 import { Feedback } from '@/components/feedback';
 import { saveFeedback } from '@/lib/feedback';
 import { headers } from 'next/headers';
@@ -20,15 +19,11 @@ export default async function Page(props: PageProps<'/docs/[[...slug]]'>) {
 
   const MDX = page.data.body;
 
-  const time = await getGithubLastEdit({
-    owner: 'vidhyagopinadh',
-    repo: 'fuma-docs-spry',
-    path: `content/docs/${page.path}`,
-  });
-
   return (
     <DocsPage toc={page.data.toc} full={page.data.full}
-      lastUpdate={time ? new Date(time) : new Date()}
+      tableOfContent={{ style: 'clerk' }}
+      tableOfContentPopover={{ style: 'clerk' }}
+      lastUpdate={page.data.lastModified ? new Date(page.data.lastModified) : undefined}
       footer={{
         enabled: true, // Enable footer with feedback
       }}>
