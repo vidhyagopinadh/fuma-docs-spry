@@ -5,6 +5,7 @@ import {
   frontmatterSchema,
   metaSchema
 } from "fumadocs-mdx/config";
+import lastModified from "fumadocs-mdx/plugins/last-modified";
 var docs = defineDocs({
   dir: "content/docs",
   docs: {
@@ -18,6 +19,7 @@ var docs = defineDocs({
   }
 });
 var source_config_default = defineConfig({
+  plugins: [lastModified()],
   mdxOptions: {
     // MDX options
   }
